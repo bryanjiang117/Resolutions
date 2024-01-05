@@ -25,7 +25,7 @@ export default function Home() {
     const submitData = {name: title, freq: freq, desc: desc};
     try 
     {
-      const response = await fetch('http://localhost:3000/api/post-resolution', 
+      const response = await fetch('/api/post-resolution', 
       {
         method: 'POST',
         body: JSON.stringify(submitData),
@@ -55,7 +55,7 @@ export default function Home() {
   async function updateResolutions() {
     try 
     {
-      const response = await fetch('http://localhost:3000/api/view-table');
+      const response = await fetch('/api/view-table');
       if (response.ok) 
       {
         console.log('successfully fetched table');
@@ -89,8 +89,8 @@ export default function Home() {
       else if (event.target.id == 'modal-desc-field') 
       {
         saveResolution(event);
-        setResTitleInput('');
         setResDescInput('');
+        setResTitleInput('');
         setResFreqInput(0);
         closeModal()
       }
