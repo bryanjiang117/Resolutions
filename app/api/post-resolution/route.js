@@ -9,9 +9,10 @@ export async function POST(req, res) {
         const data = await req.json();
         console.log(data);
         // const response = await sql`DELETE FROM resolutions;`;
-        const response = await sql`INSERT INTO resolutions (name, freq, description)
+        const response = await sql`
+        INSERT INTO resolutions (name, freq, description)
         VALUES (${data.name}, ${data.freq}, ${data.desc});`;
-        console.log(response);
+        // console.log(response);
         return NextResponse.json({ response }, { status: 200 });
     }
     catch (error) 

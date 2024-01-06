@@ -35,11 +35,7 @@ export default function Home() {
         }
       });
       
-      if (response.ok) 
-      {
-        console.log('successfully posted resolution');
-      } 
-      else 
+      if (!response.ok)
       {
         console.log('something went wrong with posting resolution');
       }
@@ -51,16 +47,34 @@ export default function Home() {
     updateResolutions();
   }
 
+  // delete all resolutions from table (for now)
+  async function deleteResolutions() {
+    try
+    {
+      const response = await fetch('/api/delete-resolution',
+      {
+        method: 'POST',
+      });
+
+      if (!response.ok) 
+      {
+        console.log('something went wrong with deleting resolutions');  
+      }
+    }
+    catch (error) 
+    {
+      console.log(error);
+    }
+    updateResolutions();
+  }
+
   // fetch the current resolutions from database
   async function updateResolutions() {
     try 
     {
       const response = await fetch('/api/view-table');
-      if (response.ok) 
-      {
-        console.log('successfully fetched table');
-      } 
-      else 
+
+      if (!response.ok)
       {
         console.log('something went wrong with fetching table');
       }
@@ -89,15 +103,16 @@ export default function Home() {
       else if (event.target.id == 'modal-desc-field') 
       {
         saveResolution(event);
-        setResDescInput('');
-        setResTitleInput('');
-        setResFreqInput(0);
         closeModal()
       }
     }
   }
 
   const saveResolution = (event) => {
+    console.log('save resolution');
+    setResTitleInput('');
+    setResDescInput('why doesnt it change');
+    setResFreqInput(0);
     postResolution(resTitleInput, resDescInput, resFreqInput);
   }
 
@@ -142,10 +157,15 @@ export default function Home() {
           <Button
             className='add-resolution'
             color="success"
-            type='shadow'
             onPress={handleOpenModal}
           >
-            +
+            Add a resolution
+          </Button>
+          <Button
+            color='danger'
+            onPress={(event) => deleteResolutions()}
+          >
+            Delete resolutions
           </Button>
           <Modal size='lg' isOpen={isOpen} onOpenChange={onOpenChange}>
             <ModalContent>
