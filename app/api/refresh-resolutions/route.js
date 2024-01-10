@@ -1,15 +1,15 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
 
 export async function GET(request) {
     try 
     {
-        // const response = await sql`DROP TABLE resolutions;`;
-        const response = await sql`CREATE TABLE IF NOT EXISTS resolutions ( name varchar(255), freq INTEGER, description varchar(255) );`;
-
+        const response = await sql`SELECT * FROM resolutions ORDER BY resolution_id;`;
         return NextResponse.json({ response }, { status: 200 });
     }
-    catch (error) 
+    catch (error)
     {
         return NextResponse.json({ error }, { status: 500 });
     }

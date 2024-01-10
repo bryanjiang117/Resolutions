@@ -6,7 +6,9 @@ import { sql } from '@vercel/postgres'
 export async function POST(req, res) {
     try 
     {
-        const response = await sql`DELETE FROM resolutions;`;
+        // TO DO delete related tasks and task instances
+        const data = await req.json();
+        const response = await sql`DELETE FROM resolutions WHERE resolution_id = ${data.resolution_id};`;
         return NextResponse.json({ response }, { status: 200 });
     }
     catch (error) 
