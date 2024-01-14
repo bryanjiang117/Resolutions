@@ -39,6 +39,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import {CustomCheckbox} from './CustomCheckbox';
+import styles from './styles.module.css';
 
 export default function Home() {  
   // navbar
@@ -177,7 +178,6 @@ export default function Home() {
   // fetch the current resolutions from database
   async function refreshResolutions() 
   {
-    // console.log('refresh resolutions');
     try 
     {
       setListIsLoading(true);
@@ -212,23 +212,26 @@ export default function Home() {
   }
 
   // saves resolution for adding or updating
-  async function handleSaveRes(event) 
+  function handleSaveRes(event) 
   {
     setModalIsLoading(true);
     if (resOpenType == 'add') 
     {
-      postResolution(title, desc, [createTask('task title', 'task desc', taskInstances)]);
-      // console.log('added resolution');
+      const updatedTasks = [...tasks, createTask('task title', 'task desc', taskInstances)];
+      setTasks(updatedTasks);
+      postResolution(title, desc, updatedTasks);
     } 
     else if (resOpenType == 'update') 
     {
-      updateResolution(selectedId, title, desc, [createTask('task title', 'task desc', taskInstances)]);
-      // console.log('updated resolution');
+      const updatedTasks = [...tasks, createTask('updated task title', 'updated task desc', taskInstances)];
+      setTasks(updatedTasks);
+      updateResolution(selectedId, title, desc, updatedTasks);
     }
-    await setTitle('');
-    await setDesc('');
-    await setTaskInstances([]);
-    await setGroupSelected([]);
+    setTitle('');
+    setDesc('');
+    setTasks([]);
+    setTaskInstances([]);
+    setGroupSelected([]);
     // await setResOpenType('none');
     setResIsOpen(false);
     setModalIsLoading(false);
@@ -297,10 +300,8 @@ export default function Home() {
   // handles checking a day of the week in modal
   function handleCheck(event) 
   {
-    // console.log('event: ', event);
-    // console.log('instances :', taskInstances);
     setGroupSelected(event);
-    setTaskInstances([...taskInstances, createTaskInstance
+    setTaskInstances((prevInstances) => [...prevInstances, createTaskInstance
     (
       event[event.length - 1], 
       new Date().toISOString().slice(11,19), 
@@ -315,14 +316,14 @@ export default function Home() {
 
   return (
     <>
-      <Navbar className='navbar' onMenuOpenChange={setMenuIsOpen}>
-
+      <Navbar className={styles.navbar} onMenuOpenChange={setMenuIsOpen}>
+        
         <NavbarMenuToggle
           aria-label={menuIsOpen ? 'Close Menu' : 'Open Menu'}
           className='lg:hidden'
         />
 
-        <NavbarContent className='nav-content hidden lg:flex'>
+        <NavbarContent className={`${styles['nav-content']} hidden lg:flex`}>
           {navItems.map((item, index) => (
             <NavbarItem key={index}>
               <Link href='#'>
@@ -346,9 +347,8 @@ export default function Home() {
       
       <main>
 
-        <div className='horizontal-container' id='add-resolution'>
+        <div className={styles['add-container']}>
           <Button
-            className='add-resolution'
             color="success"
             onPress={handleOpenModal}
             id='add-resolution-button'
@@ -361,11 +361,11 @@ export default function Home() {
                   <CircularProgress size='sm' aria-label='Loading...' /> :
                   (onClose) => (
                     <>
-                      <ModalHeader className='modal-header'>
+                      <ModalHeader className={styles['modal-header']}>
                         <h2>
                           Resolution
                         </h2>
-                        <div className='options-container'>
+                        <div className={styles['options-container']}>
                           <Dropdown>
                             <DropdownTrigger>
                               <Button
@@ -373,7 +373,7 @@ export default function Home() {
                                 isIconOnly
                                 disableRipple
                               >
-                                <img className='options-icon' src='kebab.svg' alt='options icon' />
+                                <img className={styles['options-icon']} src='kebab.svg' alt='options icon' />
                               </Button>
                             </DropdownTrigger>
                             <DropdownMenu aria-label='options'>
@@ -391,7 +391,6 @@ export default function Home() {
                           variant='bordered'
                           label='Title'
                           placeholder='Enter your title...'
-                          className='add-resolution'
                           autoFocus
                           value={title}
                           onValueChange={setTitle}
@@ -409,7 +408,7 @@ export default function Home() {
                           id='modal-desc-field'
                         />
                         <CheckboxGroup
-                          className="checkbox-group"
+                          className={styles['checkbox-group']}
                           label="Select times"
                           orientation="horizontal"
                           value={groupSelected}
@@ -421,10 +420,10 @@ export default function Home() {
                           <CustomCheckbox value={4}>Thu</CustomCheckbox>
                           <CustomCheckbox value={5}>Fri</CustomCheckbox>
                           <CustomCheckbox value={6}>Sat</CustomCheckbox>
-                          <CustomCheckbox value={7}>Sun</CustomCheckbox>
+                          <CustomCheckbox value={0}>Sun</CustomCheckbox>
                         </CheckboxGroup>
                       </ModalBody>
-                      <ModalFooter className='modal-footer'>
+                      <ModalFooter className={styles['modal-footer']}>
                         <Button
                           variant='flat'
                           color='primary'
@@ -447,30 +446,31 @@ export default function Home() {
             </Modal>
         </div>
 
-        <div className='horizontal-container' id='resolution-list'>
-          <div className='vertical-container' id='resolution-list'>
+        <div className={styles['list-horizontal-container']}>
+          <div className={styles['list-vertical-container']}>
             {listIsLoading ? 
               <CircularProgress size='md' aria-label='loading...' /> :
               resolutionItems.map((item, index) => (
                 <Card 
-                  className='resolution-item' // source of "uncontrolled to controlled" warning
+                  className={styles['resolution-item']} // source of "uncontrolled to controlled" warning
                   isPressable isBlurred isHoverable disableRipple shadow='none' 
                   onPress={handleOpenModal}
                   key={index}
                   id={`resolution-item-${index}`} 
                 >
-                  <CardBody className='resolution-body'>
-                  <div className='resolution-body' id='title-and-desc'> 
-                    <div className='resolution-title'>
-                      {item.title}
+                  <CardBody className={styles['resolution-body']}>
+                    <div className={styles['title-and-desc']}> 
+                      <div className={styles['resolution-title']}>
+                        {item.title}
+                      </div>
+                      {item.description}
                     </div>
-                    {item.description}
-                  </div>
-                  {/* make the resolution body div above not extend until freq */}
-                  <div className='resolution-freq'>
+                    
+                  </CardBody>
+                  {/* TO DO make the resolution body div above not extend until freq */}
+                  <div className={styles['resolution-freq']}>
                     0 times a week
                   </div>
-                  </CardBody>
                 </Card>
               ))
             }

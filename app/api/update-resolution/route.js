@@ -8,6 +8,7 @@ export async function POST(req, res) {
     {
         const data = await req.json();
 
+        // update resolution
         await sql`
         UPDATE resolutions
         SET 
@@ -15,37 +16,39 @@ export async function POST(req, res) {
             description = ${data.desc}
         WHERE resolution_id = ${data.resolution_id};`;
 
-        for (const task in data.tasks) 
+        // delete task instances and tasks associated with resolution (cascade deletes tasks)
+        await sql`
+        DELETE FROM task_instances
+        WHERE resolution_id = ${data.resolution_id};`;
+        
+        for (const task of data.tasks) 
         {
-            const instance_response = await sql`
-            SELECT * FROM task_instances
-            WHERE resolution_id = ${data.resolution_id}
-            LIMIT 1
+            // insert updated tasks
+            const task_response = await sql`
+            INSERT INTO tasks (title, description)
+            VALUES (
+                ${task.title},
+                ${task.description}
+            )
             RETURNING task_id;`;
-            const task_id = instance_response.rows[0].task_id;
+            const task_id = task_response.rows[0].task_id;
 
-            await sql`
-            UPDATE tasks
-            SET
-                title = ${task.title},
-                description = ${task.description}
-            WHERE task_id = ${task_id};`;
-
-            for (const task_instance in task.instances) 
-            {
+            // insert updated task instances
+            for (const task_instance of task.instances) {
                 await sql`
-                UPDATE task_instances
-                SET
-                    day_of_week = ${task_instance.day_of_week},
-                    start_time = ${task_instance.start_time},
-                    end_time = ${task_instance.end_time},
-                    completed = ${task_instance.completed}
-                WHERE resolution_id = ${data.resolution_id}
-                LIMIT 1;`;
+                INSERT INTO task_instances (resolution_id, task_id, day_of_week, start_time, end_time, completed)
+                VALUES (
+                    ${data.resolution_id},
+                    ${task_id},
+                    ${task_instance.day_of_week},
+                    ${task_instance.start_time},
+                    ${task_instance.end_time},
+                    ${task_instance.completed}
+                );`;
             }
         }
         
-        return NextResponse.json({ message: 'successfully updated resolution' }, { status: 200 });
+        return NextResponse.json({ response: 'successfully updated resolution' }, { status: 200 });
     } 
     catch (error) 
     {
