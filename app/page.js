@@ -477,7 +477,7 @@ export default function Home() {
                         variant='bordered'
                         label='Title'
                         placeholder='Enter your Resolution title...'
-                        autoFocus
+                        // autoFocus
                         value={title}
                         onValueChange={setTitle}
                         onKeyDown={(event) => handleEnter(event, onClose)}
@@ -505,7 +505,7 @@ export default function Home() {
                             isHoverable='false'
                             placeholder='Enter your Task Title...'
                             size='sm'
-                            autoFocus
+                            // autoFocus
                             value={item.title}
                             onValueChange={(event) => handleChangeTitle(event, index)}
                             onKeyDown={handleEnter}
