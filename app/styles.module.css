@@ -1,6 +1,6 @@
 .navbar {
   justify-content: left !important;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
 }
 
 .nav-item {
@@ -8,8 +8,8 @@
 }
 
 .main-container {
-  /* navbar height is 4rem and bottom margin is 3rem */
-  height: calc(100% - 4rem - 3rem);
+  /* navbar height is 4rem and bottom margin is 1rem */
+  height: calc(100% - 4rem - 1rem);
 }
 
 .vertical-container {
@@ -34,7 +34,7 @@
 }
 
 .add-icon {
-  width: max(20%, 5rem); 
+  width: 30px;
 }
 
 .list-horizontal-container {
@@ -53,9 +53,11 @@
 }
 
 .resolution-item {
+  background-color: rgb(20, 20, 20);
   height: 5rem;
   min-height: 5rem;
   width: 100%;
+  padding: 3px 5px;
   margin-bottom: 1rem;
   border-radius: 6px;
   font-size: small;
@@ -108,14 +110,15 @@
 }
 
 .checkbox-group {
-  margin: 7px 0;
+  margin-top: 12px;
+  margin-bottom: 10px;
   display: flex;
   justify-content: center;
   margin-left: 6px;
 }
 
 .add-task {
-  /* color: lightgrey; */
+  width: 100%;
 }
 
 .modal-footer {
@@ -128,5 +131,5 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: calc(100% - 4rem - 1rem);
 }

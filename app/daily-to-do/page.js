@@ -49,11 +49,10 @@ export default function Todo() {
   const [groupSelected, setGroupSelected] = useState([]);
   const [taskInstances, setTaskInstances] = useState([]);
 
-  const navItems = [['Profile', 'profile'], ['Resolutions', '/'], ['Daily To-Do', 'daily-to-do'], 
-                    ['Tasks', 'tasks'], ['Settings', 'settings']];
+  const navItems = [['Profile', 'profile'], ['Resolutions', '/'], ['Daily To-Do', 'daily-to-do']];
 
   // fetch the current resolutions from database
-  async function refreshResolutions() 
+  async function refreshTasks() 
   {
     try 
     {
@@ -66,7 +65,6 @@ export default function Todo() {
       }
       const responseData = await response.json();
       console.log(responseData.response);
-      console.log("task title: ", responseData.response[0].task.title);
       setTaskItems(responseData.response); 
     } 
     catch (error)
@@ -115,7 +113,7 @@ export default function Todo() {
   }
 
   useEffect(() => {
-    refreshResolutions();
+    refreshTasks();
   }, []);
 
   return (
@@ -150,17 +148,19 @@ export default function Todo() {
 
       </Navbar>
       
-      <main>
+      <main className={styles['vertical-container']}>
 
         <div className={styles['list-horizontal-container']}>
           <div className={styles['list-vertical-container']}>
             {listIsLoading ? 
-              <CircularProgress size='md' aria-label='loading...' /> :
+              <div className={styles.loading}>
+                <CircularProgress size='md' aria-label='loading...' />
+              </div> :
               taskItems.map((item) => (
                 item.instances.map((instance) => (
                   instance.day_of_week === (new Date()).getDay() ? 
                     <Card 
-                      className={styles['task-item']} // source of "uncontrolled to controlled" warning
+                      className={styles['task-item']} // source of "uncontrolled to controlled" warning ?
                       isPressable isBlurred isHoverable disableRipple shadow='none' 
                       onPress={handleOpenModal}
                       key={instance.task_instance_id}

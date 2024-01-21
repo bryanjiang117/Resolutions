@@ -35,13 +35,13 @@ import {
   DropdownTrigger,
   DropdownMenu, 
   DropdownItem,
+  Skeleton,
 } from '@nextui-org/react';
 
 import Link from 'next/link';
 import Image from 'next/image';
 import {CustomCheckbox} from './CustomCheckbox';
 import styles from './styles.module.css';
-// import { ReactComponent as PlusIcon } from '../public/add.svg';
 
 export default function Home() {  
   // navbar
@@ -56,11 +56,10 @@ export default function Home() {
   const [title, setTitle] = useState(''); 
   const [desc, setDesc] = useState('');
   const [taskItems, setTaskItems] = useState([]);
-  const [modalIsLoading, setModalIsLoading] = useState(false);
+  const [modalIsLoaded, setModalIsLoaded] = useState(true);
   const [groupsSelected, setGroupsSelected] = useState([[]]);
   
-  const navItems = [['Profile', 'profile'], ['Resolutions', '/'], ['Daily To-Do', 'daily-to-do'], 
-                    ['Tasks', 'tasks'], ['Settings', 'settings']];
+  const navItems = [['Profile', 'profile'], ['Resolutions', '/'], ['Daily To-Do', 'daily-to-do']];
 
   // creates a task instance object
   function createTaskInstance(day_of_week, start_time, end_time, complete) 
@@ -86,20 +85,19 @@ export default function Home() {
   // add a resolution to the database
   async function postResolution(title, desc, taskItems) 
   {
-    const submitData = 
-    {
-      title: title, 
-      desc: desc,
-      taskItems: taskItems
-    };
-
     try 
     {
       setListIsLoading(true);
       const response = await fetch('/api/post-resolution', 
       {
         method: 'POST',
-        body: JSON.stringify(submitData),
+        body: JSON.stringify(
+          {
+            title: title,
+            desc: desc,
+            taskItems: taskItems
+          }
+        ),
         headers: 
         {
           'Content-Type': 'application/json',
@@ -130,7 +128,13 @@ export default function Home() {
       const response = await fetch(`/api/update-resolution`, 
       {
         method: 'POST',
-        body: JSON.stringify({resolution_id: id, title: title, desc: desc, taskItems: taskItems}),
+        body: JSON.stringify(
+          {
+            resolution_id: id, 
+            title: title, 
+            desc: desc, 
+            taskItems: taskItems
+          }),
         headers: 
         {
           'Content-Type': 'application/json'
@@ -206,7 +210,7 @@ export default function Home() {
   {
     try 
     {
-      setModalIsLoading(true);
+      setModalIsLoaded(false);
       const query = new URLSearchParams({resolution_id: resolution_id}).toString();
       const response = await fetch(`/api/fetch-tasks?${query}`);
 
@@ -216,7 +220,6 @@ export default function Home() {
       }
       
       const responseData = await response.json();
-      console.log('taskItems ', responseData.taskItems);
       setTaskItems(responseData.taskItems);
 
       setGroupsSelected( 
@@ -238,7 +241,7 @@ export default function Home() {
     }
     finally
     {
-      setModalIsLoading(false);
+      setModalIsLoaded(true);
     }
   }
 
@@ -250,18 +253,18 @@ export default function Home() {
   // cancels any changes and closes modal
   async function handleCancelRes(event) 
   {
-    setModalIsLoading(true);
-    await setTitle('');
-    await setDesc('');
-    await setResOpenType('none');
+    setModalIsLoaded(false);
+    setTitle('');
+    setDesc('');
+    setResOpenType('none');
     setResIsOpen(false);
-    setModalIsLoading(false);
+    setModalIsLoaded(true);
   }
 
   // saves resolution for adding or updating
   function handleSaveRes(event) 
   {
-    setModalIsLoading(true);
+    setModalIsLoaded(false);
     const updatedTaskItems = taskItems.map((task, taskIndex) => {
       let updatedInstances = [];
       if (groupsSelected[taskIndex]) 
@@ -297,18 +300,19 @@ export default function Home() {
     setTaskItems([]);
     setGroupsSelected([[]]);
     setResIsOpen(false);
-    setModalIsLoading(false);
+    setModalIsLoaded(true);
   }
 
   // handles closing the modal with built-in methods (ex: clicking outside)
   function handleCloseModal(event) 
   {
-    setModalIsLoading(true);
+    setModalIsLoaded(false);
     setTitle('');
     setDesc('');
     setGroupsSelected([[]]);
+    setTaskItems([]);
     setResIsOpen(false);
-    setModalIsLoading(false);
+    setModalIsLoaded(true);
   }
 
   // open modal for adding or updating a resolution
@@ -335,7 +339,7 @@ export default function Home() {
   // handles pressing enter key in modal
   async function handleEnter(event) 
   {
-    if (!listIsLoading && !modalIsLoading && event.key == 'Enter') 
+    if (!listIsLoading && modalIsLoaded && event.key == 'Enter') 
     {
       event.preventDefault();
       const id = event.target.id[11];
@@ -426,33 +430,36 @@ export default function Home() {
         <Button
           className={styles['add-button']}
           color="success"
-          isIconOnly
-          onPress={handleOpenModal}
+          // isIconOnly
+          onClick={handleOpenModal}
           id='add-resolution-button'
         >
-          {/* <PlusIcon className={styles['add-icon']} />   */}
+          {/* <img className={styles['add-icon']} src='add.svg' alt='add icon' /> */}
+          Add Resolution
         </Button>
 
         <Modal size='lg' backdrop='blur' scrollBehavior='outside' isOpen={resIsOpen} onOpenChange={handleCloseModal}>
           <ModalContent>
-            {modalIsLoading ? 
-              <CircularProgress size='sm' aria-label='Loading...' /> :
-              (onClose) => (
+              {(onClose) => (
                 <>
                   <ModalHeader className={styles['modal-header']}>
-                    <h2>
-                      Resolution
-                    </h2>
+                    <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>
+                      <h2>
+                        Resolution
+                      </h2>
+                    </Skeleton>
                     <div className={styles['options-container']}>
                       <Dropdown>
                         <DropdownTrigger>
-                          <Button
-                            variant='bordered'
-                            isIconOnly
-                            disableRipple
-                          >
-                            <img className={styles['options-icon']} src='kebab.svg' alt='options icon' />
-                          </Button>
+                          <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>  
+                            <Button
+                              variant='bordered'
+                              isIconOnly
+                              disableRipple
+                            >
+                              <img className={styles['options-icon']} src='kebab.svg' alt='options icon' />
+                            </Button>
+                          </Skeleton>
                         </DropdownTrigger>
                         <DropdownMenu aria-label='options'>
                           <DropdownItem key='export'>Export</DropdownItem>
@@ -465,86 +472,98 @@ export default function Home() {
                     </div>
                   </ModalHeader>
                   <ModalBody>
-                    <Input
-                      variant='bordered'
-                      label='Title'
-                      placeholder='Enter your Resolution title...'
-                      autoFocus
-                      value={title}
-                      onValueChange={setTitle}
-                      onKeyDown={(event) => handleEnter(event, onClose)}
-                      id='modal-title-field'
-                    />
-                    <Textarea
-                      variant='bordered'
-                      label='Description'
-                      placeholder='Enter your Resolution description...'
-                      maxRows={3}
-                      value={desc}
-                      onValueChange={setDesc}
-                      onKeyDown={(event) => handleEnter(event, onClose)}
-                      id='modal-desc-field'
-                    />
+                    <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>
+                      <Input
+                        variant='bordered'
+                        label='Title'
+                        placeholder='Enter your Resolution title...'
+                        autoFocus
+                        value={title}
+                        onValueChange={setTitle}
+                        onKeyDown={(event) => handleEnter(event, onClose)}
+                        id='modal-title-field'
+                      />
+                    </Skeleton>
+                    <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>
+                      <Textarea
+                        variant='bordered'
+                        label='Description'
+                        placeholder='Enter your Resolution description...'
+                        maxRows={3}
+                        value={desc}
+                        onValueChange={setDesc}
+                        onKeyDown={(event) => handleEnter(event, onClose)}
+                        id='modal-desc-field'
+                      />
+                    </Skeleton>
                     <Divider className='mb-2 mt-2' />
                     {taskItems.map((item, index) => (
                       <div key={index}>
-                        <Input 
-                          variant='flat'
-                          isHoverable='false'
-                          placeholder='Enter your Task Title...'
-                          size='sm'
-                          autoFocus
-                          value={item.title}
-                          onValueChange={(event) => handleChangeTitle(event, index)}
-                          onKeyDown={handleEnter}
-                          id={`task-input-${index}`}
-                        />
-                        <CheckboxGroup
-                          className={styles['checkbox-group']}
-                          orientation="horizontal"
-                          value={groupsSelected[index]}
-                          onChange={(event) => handleCheck(event, index)}
-                        >
-                          <CustomCheckbox value={1}>Mon</CustomCheckbox>
-                          <CustomCheckbox value={2}>Tue</CustomCheckbox>
-                          <CustomCheckbox value={3}>Wed</CustomCheckbox>
-                          <CustomCheckbox value={4}>Thu</CustomCheckbox>
-                          <CustomCheckbox value={5}>Fri</CustomCheckbox>
-                          <CustomCheckbox value={6}>Sat</CustomCheckbox>
-                          <CustomCheckbox value={0}>Sun</CustomCheckbox>
-                        </CheckboxGroup>
-                        {/* <Divider className='mb-1'/> */}
+                        <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>
+                          <Input 
+                            variant='flat'
+                            isHoverable='false'
+                            placeholder='Enter your Task Title...'
+                            size='sm'
+                            autoFocus
+                            value={item.title}
+                            onValueChange={(event) => handleChangeTitle(event, index)}
+                            onKeyDown={handleEnter}
+                            id={`task-input-${index}`}
+                          />
+                        </Skeleton>
+                        <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>
+                          <CheckboxGroup
+                            className={styles['checkbox-group']}
+                            orientation="horizontal"
+                            value={groupsSelected[index]}
+                            onChange={(event) => handleCheck(event, index)}
+                          >
+                            <CustomCheckbox value={1}>Mon</CustomCheckbox>
+                            <CustomCheckbox value={2}>Tue</CustomCheckbox>
+                            <CustomCheckbox value={3}>Wed</CustomCheckbox>
+                            <CustomCheckbox value={4}>Thu</CustomCheckbox>
+                            <CustomCheckbox value={5}>Fri</CustomCheckbox>
+                            <CustomCheckbox value={6}>Sat</CustomCheckbox>
+                            <CustomCheckbox value={0}>Sun</CustomCheckbox>
+                          </CheckboxGroup>
+                        </Skeleton>
                       </div>
                     ))}
-                    <Button
-                      className={styles['add-task']}
-                      variant='flat'
-                      size='sm'
-                      disableRipple
-                      onClick={handleAddTask}
-                    >
-                      Add Task
-                    </Button>
+                    <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>
+                      <Button
+                        className={styles['add-task']}
+                        variant='flat'
+                        size='sm'
+                        disableRipple
+                        onClick={handleAddTask}
+                      >
+                        Add Task
+                      </Button>
+                    </Skeleton>
                   </ModalBody>
                   <ModalFooter className={styles['modal-footer']}>
-                    <Button
-                      variant='flat'
-                      color='primary'
-                      onPress={handleSaveRes}
-                    >
-                      Submit
-                    </Button>
-                    <Button
-                      variant='flat'
-                      color='danger'
-                      onPress={handleCancelRes}
-                    >
-                      Cancel
-                    </Button>
+                    <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>
+                      <Button
+                        variant='flat'
+                        color='primary'
+                        onPress={handleSaveRes}
+                      >
+                        Submit
+                      </Button>
+                    </Skeleton>
+                    <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'> 
+                      <Button
+                        variant='flat'
+                        color='danger'
+                        onPress={handleCancelRes}
+                      >
+                        Cancel
+                      </Button>
+                    </Skeleton>
                   </ModalFooter>
                 </>
-              )
-            }
+              )}
           </ModalContent>
         </Modal>
 

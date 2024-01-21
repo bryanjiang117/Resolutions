@@ -18,8 +18,7 @@ export async function POST(req, res) {
         RETURNING resolution_id;`;
         const resolution_id = resolution_response.rows[0].resolution_id;
 
-        // let response = new Array(data.tasks.length);
-        for (const task of data.tasks) 
+        for (const task of data.taskItems) 
         {
             // post task and get its id
             const task_response = await sql`
@@ -30,7 +29,6 @@ export async function POST(req, res) {
             )
             RETURNING task_id;`;
             const task_id = task_response.rows[0].task_id;
-            // response.push({task_id: task_id, instance_ids: new Array(task.instances.length)});
 
             for (const task_instance of task.instances) 
             {
@@ -46,7 +44,6 @@ export async function POST(req, res) {
                 )
                 RETURNING task_instance_id;`;
                 const instance_id = instance_response.rows[0].task_instance_id;
-                // response[response.length - 1].instance_ids.push(instance_id);
             }
         };
         

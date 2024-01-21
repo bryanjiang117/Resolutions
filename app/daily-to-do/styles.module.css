@@ -1,5 +1,6 @@
 .navbar {
   justify-content: left !important;
+  margin-bottom: 1rem;
 }
 
 .nav-item {
@@ -9,8 +10,8 @@
 .vertical-container{
   display: flex;
   flex-direction: column;
-  height: 100%;
-  width: 100%;
+  height: calc(100% - 4rem - 1rem);
+  width: 100%
 }
 
 .horizontal-container {
@@ -42,9 +43,11 @@
 }
 
 .task-item {
+  background-color: rgb(20, 20, 20);
   height: 5rem;
   min-height: 5rem;
   width: 100%;
+  padding: 3px 5px;
   margin-bottom: 1rem;
   border-radius: 6px;
   font-size: small;
@@ -106,6 +109,11 @@
   justify-content: left;
 }
 
-
-
+.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(100% - 4rem - 1rem);
+}
 
