@@ -37,7 +37,7 @@
 .list-vertical-container {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: max(30rem, 50%);
   min-width: 20rem;
   padding: 1rem;
 }
