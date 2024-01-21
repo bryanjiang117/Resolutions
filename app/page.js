@@ -11,6 +11,7 @@ import {
   Button,
   Input,
   CheckboxGroup, 
+  Divider,
   Textarea, 
   Card, 
   CardHeader, 
@@ -40,6 +41,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {CustomCheckbox} from './CustomCheckbox';
 import styles from './styles.module.css';
+// import { ReactComponent as PlusIcon } from '../public/add.svg';
 
 export default function Home() {  
   // navbar
@@ -53,13 +55,12 @@ export default function Home() {
   const [resOpenType, setResOpenType] = useState('none');
   const [title, setTitle] = useState(''); 
   const [desc, setDesc] = useState('');
-  const [tasks, setTasks] = useState([]);
+  const [taskItems, setTaskItems] = useState([]);
   const [modalIsLoading, setModalIsLoading] = useState(false);
-  const [groupSelected, setGroupSelected] = useState([]);
-  const [taskInstances, setTaskInstances] = useState([]);
+  const [groupsSelected, setGroupsSelected] = useState([[]]);
   
-  const navItems = ['Profile', 'Resolutions', 'Daily To Do', 'Tasks', 'Settings'];
-  const days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const navItems = [['Profile', 'profile'], ['Resolutions', '/'], ['Daily To-Do', 'daily-to-do'], 
+                    ['Tasks', 'tasks'], ['Settings', 'settings']];
 
   // creates a task instance object
   function createTaskInstance(day_of_week, start_time, end_time, complete) 
@@ -83,13 +84,13 @@ export default function Home() {
   }
 
   // add a resolution to the database
-  async function postResolution(title, desc, tasks) 
+  async function postResolution(title, desc, taskItems) 
   {
     const submitData = 
     {
       title: title, 
       desc: desc,
-      tasks: tasks
+      taskItems: taskItems
     };
 
     try 
@@ -121,14 +122,15 @@ export default function Home() {
   }
 
   // update a resolution with new values
-  async function updateResolution(id, title, desc, tasks) 
+  async function updateResolution(id, title, desc, taskItems) 
   {
     try
     {
       setListIsLoading(true);
-      const response = await fetch(`/api/update-resolution`, {
+      const response = await fetch(`/api/update-resolution`, 
+      {
         method: 'POST',
-        body: JSON.stringify({resolution_id: id, title: title, desc: desc, tasks: tasks}),
+        body: JSON.stringify({resolution_id: id, title: title, desc: desc, taskItems: taskItems}),
         headers: 
         {
           'Content-Type': 'application/json'
@@ -200,6 +202,51 @@ export default function Home() {
     }
   }
 
+  async function fetchTasks(resolution_id) 
+  {
+    try 
+    {
+      setModalIsLoading(true);
+      const query = new URLSearchParams({resolution_id: resolution_id}).toString();
+      const response = await fetch(`/api/fetch-tasks?${query}`);
+
+      if (!response.ok) 
+      {
+        console.log('something went wrong with fetching tasks');
+      }
+      
+      const responseData = await response.json();
+      console.log('taskItems ', responseData.taskItems);
+      setTaskItems(responseData.taskItems);
+
+      setGroupsSelected( 
+        responseData.taskItems.reduce((groupsSelected, task) => 
+        {
+          return [...groupsSelected, task.instances.length > 0
+            ? task.instances.reduce((groupSelected, instance) => 
+            {
+              return [...groupSelected, instance.day_of_week];
+            }, [])
+            : []
+          ]
+        }, [])
+      );
+    }
+    catch (error)
+    {
+      console.log(error); 
+    }
+    finally
+    {
+      setModalIsLoading(false);
+    }
+  }
+
+  function handleAddTask(event) 
+  {
+    setTaskItems([...taskItems, createTask('', '', [])]);
+  }
+
   // cancels any changes and closes modal
   async function handleCancelRes(event) 
   {
@@ -215,36 +262,51 @@ export default function Home() {
   function handleSaveRes(event) 
   {
     setModalIsLoading(true);
+    const updatedTaskItems = taskItems.map((task, taskIndex) => {
+      let updatedInstances = [];
+      if (groupsSelected[taskIndex]) 
+      {
+        updatedInstances = groupsSelected[taskIndex].reduce((instances, day_of_week) => {
+          return [...instances, (createTaskInstance
+            (
+              day_of_week,
+              new Date().toISOString().slice(11,19), 
+              new Date().toISOString().slice(11,19), 
+              false
+            ))]
+        }, []);
+      } 
+
+      return {
+        title: task.title,
+        description: task.description,
+        instances: updatedInstances 
+      }
+    })
+
     if (resOpenType == 'add') 
     {
-      const updatedTasks = [...tasks, createTask('task title', 'task desc', taskInstances)];
-      setTasks(updatedTasks);
-      postResolution(title, desc, updatedTasks);
+      postResolution(title, desc, updatedTaskItems);
     } 
     else if (resOpenType == 'update') 
     {
-      const updatedTasks = [...tasks, createTask('updated task title', 'updated task desc', taskInstances)];
-      setTasks(updatedTasks);
-      updateResolution(selectedId, title, desc, updatedTasks);
+      updateResolution(selectedId, title, desc, updatedTaskItems);
     }
     setTitle('');
     setDesc('');
-    setTasks([]);
-    setTaskInstances([]);
-    setGroupSelected([]);
-    // await setResOpenType('none');
+    setTaskItems([]);
+    setGroupsSelected([[]]);
     setResIsOpen(false);
     setModalIsLoading(false);
   }
 
   // handles closing the modal with built-in methods (ex: clicking outside)
-  async function handleCloseModal(event) 
+  function handleCloseModal(event) 
   {
     setModalIsLoading(true);
-    await setTitle('');
-    await setDesc('');
-    await setTaskInstances([]);
-    await setGroupSelected([]);
+    setTitle('');
+    setDesc('');
+    setGroupsSelected([[]]);
     setResIsOpen(false);
     setModalIsLoading(false);
   }
@@ -256,16 +318,14 @@ export default function Home() {
     const regex = new RegExp(`^${idPrefix}\\d+$`);
     if (regex.test(event.target.id)) 
     {
-      // console.log('updating a resolution');
       const key = parseInt(event.target.id.substring(idPrefix.length));
-      // console.log('the key: ', key);
       setTitle(resolutionItems[key].title);
       setDesc(resolutionItems[key].description);
       setSelectedId(resolutionItems[key].resolution_id);
       setResOpenType('update');
+      fetchTasks(resolutionItems[key].resolution_id);
     } else if (event.target.id == 'add-resolution-button')
     {
-      // console.log('adding a resolution');
       setSelectedId(-1);
       setResOpenType('add');
     }
@@ -278,11 +338,20 @@ export default function Home() {
     if (!listIsLoading && !modalIsLoading && event.key == 'Enter') 
     {
       event.preventDefault();
+      const id = event.target.id[11];
       if (event.target.id == 'modal-title-field') 
       {
         document.getElementById('modal-desc-field').focus();
       }
-      else if (event.target.id == 'modal-desc-field') 
+      else if (event.target.id == 'modal-desc-field' && taskItems.length > 0) 
+      {
+        document.getElementById('task-input-0').focus();
+      }
+      else if (event.target.id.startsWith('task-input-') && id < taskItems.length - 1)
+      {
+        document.getElementById(`task-input-${id + 1}`).focus();
+      } 
+      else
       {
         handleSaveRes(event);
       }
@@ -298,16 +367,23 @@ export default function Home() {
   }
 
   // handles checking a day of the week in modal
-  function handleCheck(event) 
+  function handleCheck(event, index) 
   {
-    setGroupSelected(event);
-    setTaskInstances((prevInstances) => [...prevInstances, createTaskInstance
-    (
-      event[event.length - 1], 
-      new Date().toISOString().slice(11,19), 
-      new Date().toISOString().slice(11,19), 
-      false
-    )]);
+    setGroupsSelected([event]);
+    if (index >= groupsSelected.length - 1) 
+    {
+      setGroupsSelected([...groupsSelected.slice(0, index), event]);
+    }
+    else 
+    {
+      setGroupsSelected([...groupsSelected.slice(0, index), event, ...groupsSelected.slice(index + 1)]);
+    }
+  }
+
+  function handleChangeTitle(event, task) {
+    const updatedTaskItems = [...taskItems];
+    updatedTaskItems[task].title = event;
+    setTaskItems(updatedTaskItems);
   }
 
   useEffect(() => {
@@ -326,8 +402,8 @@ export default function Home() {
         <NavbarContent className={`${styles['nav-content']} hidden lg:flex`}>
           {navItems.map((item, index) => (
             <NavbarItem key={index}>
-              <Link href='#'>
-                {item}
+              <Link href={item[1]}>
+                {item[0]}
               </Link>
             </NavbarItem>
           ))}
@@ -336,8 +412,8 @@ export default function Home() {
         <NavbarMenu>
           {navItems.map((item, index) => (
             <NavbarMenuItem key={index}>
-              <Link href='#'>
-                {item}
+              <Link href={item[1]}>
+                {item[0]}
               </Link>
             </NavbarMenuItem>
           ))}
@@ -345,74 +421,89 @@ export default function Home() {
 
       </Navbar>
       
-      <main>
+      <main className={styles['main-container']}>
 
-        <div className={styles['add-container']}>
-          <Button
-            color="success"
-            onPress={handleOpenModal}
-            id='add-resolution-button'
-          >
-            Add a resolution
-          </Button>
-            <Modal size='lg' isOpen={resIsOpen} onOpenChange={handleCloseModal}>
-              <ModalContent>
-                {modalIsLoading ? 
-                  <CircularProgress size='sm' aria-label='Loading...' /> :
-                  (onClose) => (
-                    <>
-                      <ModalHeader className={styles['modal-header']}>
-                        <h2>
-                          Resolution
-                        </h2>
-                        <div className={styles['options-container']}>
-                          <Dropdown>
-                            <DropdownTrigger>
-                              <Button
-                                variant='bordered'
-                                isIconOnly
-                                disableRipple
-                              >
-                                <img className={styles['options-icon']} src='kebab.svg' alt='options icon' />
-                              </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu aria-label='options'>
-                              <DropdownItem key='export'>Export</DropdownItem>
-                              {selectedId == -1 ? 
-                                <DropdownItem isDisabled key='delete' onClick={handleDelete}>Delete</DropdownItem> :
-                                <DropdownItem key='delete' onClick={handleDelete}>Delete</DropdownItem>                                
-                              }
-                            </DropdownMenu>
-                          </Dropdown>
-                        </div>
-                      </ModalHeader>
-                      <ModalBody>
-                        <Input
-                          variant='bordered'
-                          label='Title'
-                          placeholder='Enter your title...'
+        <Button
+          className={styles['add-button']}
+          color="success"
+          isIconOnly
+          onPress={handleOpenModal}
+          id='add-resolution-button'
+        >
+          {/* <PlusIcon className={styles['add-icon']} />   */}
+        </Button>
+
+        <Modal size='lg' backdrop='blur' scrollBehavior='outside' isOpen={resIsOpen} onOpenChange={handleCloseModal}>
+          <ModalContent>
+            {modalIsLoading ? 
+              <CircularProgress size='sm' aria-label='Loading...' /> :
+              (onClose) => (
+                <>
+                  <ModalHeader className={styles['modal-header']}>
+                    <h2>
+                      Resolution
+                    </h2>
+                    <div className={styles['options-container']}>
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <Button
+                            variant='bordered'
+                            isIconOnly
+                            disableRipple
+                          >
+                            <img className={styles['options-icon']} src='kebab.svg' alt='options icon' />
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu aria-label='options'>
+                          <DropdownItem key='export'>Export</DropdownItem>
+                          {selectedId == -1 ? 
+                            <DropdownItem isDisabled key='delete' onClick={handleDelete}>Delete</DropdownItem> :
+                            <DropdownItem key='delete' onClick={handleDelete}>Delete</DropdownItem>                                
+                          }
+                        </DropdownMenu>
+                      </Dropdown>
+                    </div>
+                  </ModalHeader>
+                  <ModalBody>
+                    <Input
+                      variant='bordered'
+                      label='Title'
+                      placeholder='Enter your Resolution title...'
+                      autoFocus
+                      value={title}
+                      onValueChange={setTitle}
+                      onKeyDown={(event) => handleEnter(event, onClose)}
+                      id='modal-title-field'
+                    />
+                    <Textarea
+                      variant='bordered'
+                      label='Description'
+                      placeholder='Enter your Resolution description...'
+                      maxRows={3}
+                      value={desc}
+                      onValueChange={setDesc}
+                      onKeyDown={(event) => handleEnter(event, onClose)}
+                      id='modal-desc-field'
+                    />
+                    <Divider className='mb-2 mt-2' />
+                    {taskItems.map((item, index) => (
+                      <div key={index}>
+                        <Input 
+                          variant='flat'
+                          isHoverable='false'
+                          placeholder='Enter your Task Title...'
+                          size='sm'
                           autoFocus
-                          value={title}
-                          onValueChange={setTitle}
-                          onKeyDown={(event) => handleEnter(event, onClose)}
-                          id='modal-title-field'
-                        />
-                        <Textarea
-                          variant='bordered'
-                          label='Description'
-                          placeholder='Enter your description...'
-                          maxRows={3}
-                          value={desc}
-                          onValueChange={setDesc}
-                          onKeyDown={(event) => handleEnter(event, onClose)}
-                          id='modal-desc-field'
+                          value={item.title}
+                          onValueChange={(event) => handleChangeTitle(event, index)}
+                          onKeyDown={handleEnter}
+                          id={`task-input-${index}`}
                         />
                         <CheckboxGroup
                           className={styles['checkbox-group']}
-                          label="Select times"
                           orientation="horizontal"
-                          value={groupSelected}
-                          onChange={handleCheck}
+                          value={groupsSelected[index]}
+                          onChange={(event) => handleCheck(event, index)}
                         >
                           <CustomCheckbox value={1}>Mon</CustomCheckbox>
                           <CustomCheckbox value={2}>Tue</CustomCheckbox>
@@ -422,34 +513,47 @@ export default function Home() {
                           <CustomCheckbox value={6}>Sat</CustomCheckbox>
                           <CustomCheckbox value={0}>Sun</CustomCheckbox>
                         </CheckboxGroup>
-                      </ModalBody>
-                      <ModalFooter className={styles['modal-footer']}>
-                        <Button
-                          variant='flat'
-                          color='primary'
-                          onPress={handleSaveRes}
-                        >
-                          Submit
-                        </Button>
-                        <Button
-                          variant='flat'
-                          color='danger'
-                          onPress={handleCancelRes}
-                        >
-                          Cancel
-                        </Button>
-                      </ModalFooter>
-                    </>
-                  )
-                }
-              </ModalContent>
-            </Modal>
-        </div>
+                        {/* <Divider className='mb-1'/> */}
+                      </div>
+                    ))}
+                    <Button
+                      className={styles['add-task']}
+                      variant='flat'
+                      size='sm'
+                      disableRipple
+                      onClick={handleAddTask}
+                    >
+                      Add Task
+                    </Button>
+                  </ModalBody>
+                  <ModalFooter className={styles['modal-footer']}>
+                    <Button
+                      variant='flat'
+                      color='primary'
+                      onPress={handleSaveRes}
+                    >
+                      Submit
+                    </Button>
+                    <Button
+                      variant='flat'
+                      color='danger'
+                      onPress={handleCancelRes}
+                    >
+                      Cancel
+                    </Button>
+                  </ModalFooter>
+                </>
+              )
+            }
+          </ModalContent>
+        </Modal>
 
         <div className={styles['list-horizontal-container']}>
           <div className={styles['list-vertical-container']}>
             {listIsLoading ? 
-              <CircularProgress size='md' aria-label='loading...' /> :
+              <div className={styles.loading}>
+                <CircularProgress size='md' aria-label='loading...' />
+              </div> :
               resolutionItems.map((item, index) => (
                 <Card 
                   className={styles['resolution-item']} // source of "uncontrolled to controlled" warning
@@ -467,10 +571,6 @@ export default function Home() {
                     </div>
                     
                   </CardBody>
-                  {/* TO DO make the resolution body div above not extend until freq */}
-                  <div className={styles['resolution-freq']}>
-                    0 times a week
-                  </div>
                 </Card>
               ))
             }

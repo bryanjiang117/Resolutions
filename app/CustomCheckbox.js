@@ -1,16 +1,15 @@
 import {useCheckbox, Chip, VisuallyHidden, tv} from "@nextui-org/react";
-import {CheckIcon} from './CheckIcon.js'
 
 const checkbox = tv({
   slots: {
     base: "border-default hover:bg-default-200",
-    content: "text-default-500 text-sm"
+    content: "text-default-400 text-xs"
   },
   variants: {
     isSelected: {
       true: {
         base: "border-primary bg-primary hover:bg-primary-500 hover:border-primary-500",
-        content: "text-primary-foreground pl-1"
+        content: "text-primary-foreground"
       }
     },
     isFocusVisible: {
@@ -40,18 +39,18 @@ export const CustomCheckbox = (props) => {
       <VisuallyHidden>
         <input {...getInputProps()} />
       </VisuallyHidden>
-      <Chip
-        classNames={{
-          base: styles.base(),
-          content: styles.content(),
-        }}
-        color="primary"
-        startContent={isSelected ? <CheckIcon className="ml-1" /> : null}
-        variant="faded"
-        {...getLabelProps()}
-      >
-        {children ? children : isSelected ? "Enabled" : "Disabled"}
-      </Chip>
+        <Chip
+          classNames={{
+            base: styles.base(),
+            content: styles.content(),
+          }}
+          style={{marginRight: '9px'}}
+          color="primary"
+          variant="faded"
+          {...getLabelProps()}
+        >
+          {children ? children : isSelected ? "Enabled" : "Disabled"}
+        </Chip>
     </label>
   );
 }

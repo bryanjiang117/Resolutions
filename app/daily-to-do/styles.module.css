@@ -41,7 +41,7 @@
   padding: 1rem;
 }
 
-.resolution-item {
+.task-item {
   height: 5rem;
   min-height: 5rem;
   width: 100%;
@@ -50,7 +50,7 @@
   font-size: small;
 }
 
-.resolution-body {
+.task-body {
   width: 80%;
   min-width: 20rem;
 }
@@ -69,7 +69,7 @@
   margin-bottom: 4px;
 }
 
-.resolution-freq {
+.task-freq {
   position: absolute;
   bottom: 0;
   right: 0;

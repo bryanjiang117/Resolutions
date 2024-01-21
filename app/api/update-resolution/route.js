@@ -21,7 +21,7 @@ export async function POST(req, res) {
         DELETE FROM task_instances
         WHERE resolution_id = ${data.resolution_id};`;
         
-        for (const task of data.tasks) 
+        for (const task of data.taskItems) 
         {
             // insert updated tasks
             const task_response = await sql`
@@ -47,6 +47,7 @@ export async function POST(req, res) {
                 );`;
             }
         }
+        
         
         return NextResponse.json({ response: 'successfully updated resolution' }, { status: 200 });
     } 

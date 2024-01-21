@@ -1,12 +1,18 @@
 .navbar {
   justify-content: left !important;
+  margin-bottom: 3rem;
 }
 
 .nav-item {
   padding-right: 3rem;
 }
 
-.vertical-container{
+.main-container {
+  /* navbar height is 4rem and bottom margin is 3rem */
+  height: calc(100% - 4rem - 3rem);
+}
+
+.vertical-container {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -20,10 +26,15 @@
   height: 100%;
 }
 
-.add-container {
-  display: flex;
-  justify-content: center;
-  height: 4rem;
+.add-button {
+  position: fixed !important;
+  bottom: max(1rem, 4vh);
+  right: max(1rem, 4vw);
+  z-index: 2;
+}
+
+.add-icon {
+  width: max(20%, 5rem); 
 }
 
 .list-horizontal-container {
@@ -97,8 +108,14 @@
 }
 
 .checkbox-group {
+  margin: 7px 0;
   display: flex;
   justify-content: center;
+  margin-left: 6px;
+}
+
+.add-task {
+  /* color: lightgrey; */
 }
 
 .modal-footer {
@@ -106,6 +123,10 @@
   justify-content: left;
 }
 
-
-
-
+.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

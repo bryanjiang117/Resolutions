@@ -49,7 +49,8 @@ export default function Todo() {
   const [groupSelected, setGroupSelected] = useState([]);
   const [taskInstances, setTaskInstances] = useState([]);
 
-  const navItems = ['Profile', 'Resolutions', 'Daily To Do', 'Tasks', 'Settings'];
+  const navItems = [['Profile', 'profile'], ['Resolutions', '/'], ['Daily To-Do', 'daily-to-do'], 
+                    ['Tasks', 'tasks'], ['Settings', 'settings']];
 
   // fetch the current resolutions from database
   async function refreshResolutions() 
@@ -126,21 +127,22 @@ export default function Todo() {
           className='lg:hidden'
         />
 
+
         <NavbarContent className={`${styles['nav-content']} hidden lg:flex`}>
-          {navItems.map((item, index) => (
-            <NavbarItem key={index}>
-              <Link href='#'>
-                {item}
-              </Link>
-            </NavbarItem>
-          ))}
+            {navItems.map((item, index) => (
+              <NavbarItem key={index}>
+                <Link href={item[1]}>
+                  {item[0]}
+                </Link>
+              </NavbarItem>
+            ))}
         </NavbarContent>
 
         <NavbarMenu>
           {navItems.map((item, index) => (
             <NavbarMenuItem key={index}>
-              <Link href='#'>
-                {item}
+              <Link href={item[1]}>
+                {item[0]}
               </Link>
             </NavbarMenuItem>
           ))}
@@ -154,10 +156,30 @@ export default function Todo() {
           <div className={styles['list-vertical-container']}>
             {listIsLoading ? 
               <CircularProgress size='md' aria-label='loading...' /> :
-              taskItems.map((item, key) => (
+              taskItems.map((item) => (
                 item.instances.map((instance) => (
                   instance.day_of_week === (new Date()).getDay() ? 
-                    <div key={instance.task_instance_id}>{item.task.title}</div> : 
+                    <Card 
+                      className={styles['task-item']} // source of "uncontrolled to controlled" warning
+                      isPressable isBlurred isHoverable disableRipple shadow='none' 
+                      onPress={handleOpenModal}
+                      key={instance.task_instance_id}
+                      id={`task-item-${instance.task_instance_id}`} 
+                    >
+                      <CardBody className={styles['task-body']}>
+                        <div className={styles['title-and-desc']}> 
+                          <div className={styles['resolution-title']}>
+                            {item.task.title}
+                          </div>
+                          {item.task.description}
+                        </div>
+                        
+                      </CardBody>
+                      {/* TO DO make the resolution body div above not extend until freq */}
+                      <div className={styles['task-freq']}>
+                        {item.instances.length} times a week
+                      </div>
+                    </Card> :
                     null
                 ))
               ))
