@@ -43,7 +43,7 @@ export async function POST(req, res) {
                     ${task_instance.day_of_week},
                     ${task_instance.start_time},
                     ${task_instance.end_time},
-                    ${task_instance.completed}
+                    ${task_instance.completed == null ? false : task_instance.completed}
                 );`;
             }
         }

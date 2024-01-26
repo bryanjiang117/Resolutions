@@ -35,8 +35,7 @@ import styles from './styles.module.css';
 export default function Profile() {
   // navbar
   const [menuIsOpen, setMenuIsOpen] = useState(false);
-  const navItems = [['Profile', 'profile'], ['Resolutions', '/'], ['Daily To-Do', 'daily-to-do'], 
-                  ['Tasks', 'tasks'], ['Settings', 'settings']];
+  const navItems = [['Profile', 'profile'], ['Resolutions', '/'], ['Daily To-Do', 'daily-to-do']];
 
   return (
     <>

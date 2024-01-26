@@ -81,7 +81,6 @@ export default function Todo() {
         );
       }, [])
       setTasksToday(updatedTasksToday);
-      console.log(updatedTasksToday);
     } 
     catch (error)
     {
