@@ -19,6 +19,7 @@ export async function GET(request) {
         await sql`
         CREATE TABLE IF NOT EXISTS tasks (
             task_id SERIAL PRIMARY KEY,
+            resolution_id INTEGER REFERENCES resolutions(resolution_id) ON DELETE CASCADE,
             title varchar(255),
             description varchar(255)
         );`;
@@ -26,12 +27,11 @@ export async function GET(request) {
         const response = await sql`
         CREATE TABLE IF NOT EXISTS task_instances (
             task_instance_id SERIAL PRIMARY KEY,
-            resolution_id INTEGER REFERENCES resolutions(resolution_id),
             task_id INTEGER REFERENCES tasks(task_id) ON DELETE CASCADE,
             day_of_week INTEGER,
             start_time TIME,
             end_time TIME,
-            completed BOOLEAN DEFAULT false
+            completed BOOLEAN NOT NULL DEFAULT FALSE
         );`;
         
         return NextResponse.json({ response }, {status: 200});

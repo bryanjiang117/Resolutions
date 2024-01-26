@@ -70,7 +70,7 @@ export default function Profile() {
 
       </Navbar>
 
-      <div className='h-full flex flex-col justify-center items-center'>
+      <div className={`${styles['main-container']} flex flex-col justify-center items-center`}>
         <h1>Under construction</h1>
       </div>
     </>

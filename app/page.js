@@ -247,7 +247,7 @@ export default function Home() {
 
   function handleAddTask(event) 
   {
-    setTaskItems([...taskItems, createTask('', '', [])]);
+    taskItems ? setTaskItems([...taskItems, createTask('', '', [])]) : setTaskItems([createTask('', '', [])]);
   }
 
   // cancels any changes and closes modal
@@ -342,11 +342,12 @@ export default function Home() {
     if (!listIsLoading && modalIsLoaded && event.key == 'Enter') 
     {
       event.preventDefault();
-      const id = event.target.id[11];
+      const id = parseInt(event.target.id[11]);
       if (event.target.id == 'modal-title-field') 
       {
         document.getElementById('modal-desc-field').focus();
       }
+      // TO DO: change this to a down arrow key since people want to use enter to do nextline for description
       else if (event.target.id == 'modal-desc-field' && taskItems.length > 0) 
       {
         document.getElementById('task-input-0').focus();
@@ -384,9 +385,9 @@ export default function Home() {
     }
   }
 
-  function handleChangeTitle(event, task) {
+  function handleChangeTitle(event, index) {
     const updatedTaskItems = [...taskItems];
-    updatedTaskItems[task].title = event;
+    updatedTaskItems[index].title = event;
     setTaskItems(updatedTaskItems);
   }
 
@@ -450,8 +451,8 @@ export default function Home() {
                     </Skeleton>
                     <div className={styles['options-container']}>
                       <Dropdown>
-                        <DropdownTrigger>
-                          <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>  
+                        <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>  
+                          <DropdownTrigger>
                             <Button
                               variant='bordered'
                               isIconOnly
@@ -459,8 +460,8 @@ export default function Home() {
                             >
                               <img className={styles['options-icon']} src='kebab.svg' alt='options icon' />
                             </Button>
-                          </Skeleton>
-                        </DropdownTrigger>
+                          </DropdownTrigger>
+                        </Skeleton>
                         <DropdownMenu aria-label='options'>
                           <DropdownItem key='export'>Export</DropdownItem>
                           {selectedId == -1 ? 
@@ -477,7 +478,7 @@ export default function Home() {
                         variant='bordered'
                         label='Title'
                         placeholder='Enter your Resolution title...'
-                        // autoFocus
+                        {...(resOpenType == 'add' ? {autoFocus : true} : {})}
                         value={title}
                         onValueChange={setTitle}
                         onKeyDown={(event) => handleEnter(event, onClose)}
@@ -497,7 +498,7 @@ export default function Home() {
                       />
                     </Skeleton>
                     <Divider className='mb-2 mt-2' />
-                    {taskItems.map((item, index) => (
+                    {taskItems ? taskItems.map((item, index) => (
                       <div key={index}>
                         <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>
                           <Input 
@@ -529,7 +530,8 @@ export default function Home() {
                           </CheckboxGroup>
                         </Skeleton>
                       </div>
-                    ))}
+                    )) :
+                    null}
                     <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>
                       <Button
                         className={styles['add-task']}

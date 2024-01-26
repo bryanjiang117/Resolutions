@@ -28,6 +28,7 @@ import {
   DropdownTrigger,
   DropdownMenu, 
   DropdownItem,
+  Checkbox,
 } from '@nextui-org/react';
 import Link from 'next/link';
 import styles from './styles.module.css';
@@ -35,9 +36,10 @@ import styles from './styles.module.css';
 export default function Todo() {
   // navbar
   const [menuIsOpen, setMenuIsOpen] = useState(false);
-  // resolutions list
+  // task list
   const [listIsLoading, setListIsLoading] = useState(false);
   const [taskItems, setTaskItems] = useState([]);
+  const [tasksToday, setTasksToday] = useState([]);
   // modal 
   const [selectedId, setSelectedId] = useState(-1);
   const [resIsOpen, setResIsOpen] = useState(false);
@@ -64,8 +66,22 @@ export default function Todo() {
         console.log('something went wrong with fetching tasks');
       }
       const responseData = await response.json();
-      console.log(responseData.response);
       setTaskItems(responseData.response); 
+      const updatedTasksToday = responseData.response.reduce((total, item) => {
+        const todaysInstance = item.instances.filter((instance) => instance.day_of_week === (new Date()).getDay());
+        return (todaysInstance.length > 0 ? 
+          [...total, 
+          {
+            task: item.task,
+            instance: todaysInstance[0],
+            nInstances: item.instances.length
+          }
+          ] :
+          total
+        );
+      }, [])
+      setTasksToday(updatedTasksToday);
+      console.log(updatedTasksToday);
     } 
     catch (error)
     {
@@ -77,39 +93,73 @@ export default function Todo() {
     }
   }
 
+  // set a task to be completed / uncompleted
+  async function setTaskCompletion(task_instance_id, completed)
+  {
+    try 
+    {
+      const response = await fetch('/api/set-task-completion', 
+      {
+        method: 'POST',
+        body: JSON.stringify(
+        {
+          task_instance_id: task_instance_id,
+          completed: completed
+        }),
+        headers:
+        {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) 
+      {
+        console.log('something went wrong with setting the task completion');
+      }
+    } 
+    catch (error) 
+    {
+      console.log(error);
+    }
+  }
+
   // handles closing the modal with built-in methods (ex: clicking outside)
   async function handleCloseModal(event) 
   {
     setModalIsLoading(true);
-    await setTitle('');
-    await setDesc('');
-    await setTaskInstances([]);
-    await setGroupSelected([]);
+    setTitle('');
+    setDesc('');
+    setTaskInstances([]);
+    setGroupSelected([]);
     setResIsOpen(false);
     setModalIsLoading(false);
   }
 
   // open modal for adding or updating a resolution
-  async function handleOpenModal(event) 
+  function handleOpenModal(event) 
   {
     const idPrefix = 'resolution-item-';
     const regex = new RegExp(`^${idPrefix}\\d+$`);
     if (regex.test(event.target.id)) 
     {
-      // console.log('updating a resolution');
       const key = parseInt(event.target.id.substring(idPrefix.length));
-      // console.log('the key: ', key);
       // setTitle(TaskItems[key].title);
       // setDesc(TaskItems[key].description);
       // setSelectedId(TaskItems[key].resolution_id);
       setResOpenType('update');
     } else if (event.target.id == 'add-resolution-button')
     {
-      // console.log('adding a resolution');
       setSelectedId(-1);
       setResOpenType('add');
     }
     setResIsOpen(true);
+  }
+
+  function handleCheck(event, index) {
+    const updatedTasksToday = [...tasksToday];
+    updatedTasksToday[index].instance.completed = !updatedTasksToday[index].instance.completed;
+    setTasksToday(updatedTasksToday);
+    setTaskCompletion(tasksToday[index].instance.task_instance_id, updatedTasksToday[index].instance.completed);
   }
 
   useEffect(() => {
@@ -156,20 +206,29 @@ export default function Todo() {
               <div className={styles.loading}>
                 <CircularProgress size='md' aria-label='loading...' />
               </div> :
-              taskItems.map((item) => (
-                item.instances.map((instance) => (
-                  instance.day_of_week === (new Date()).getDay() ? 
+              tasksToday.map((item, index) => (
                     <Card 
                       className={styles['task-item']} // source of "uncontrolled to controlled" warning ?
                       isPressable isBlurred isHoverable disableRipple shadow='none' 
-                      onPress={handleOpenModal}
-                      key={instance.task_instance_id}
-                      id={`task-item-${instance.task_instance_id}`} 
+                      onClick={handleOpenModal}
+                      key={item.instance.task_instance_id}
+                      id={`task-item-${item.instance.task_instance_id}`} 
                     >
                       <CardBody className={styles['task-body']}>
+                        <div className='flex flex-col w-full'>
+                          <Checkbox 
+                            color='success' 
+                            size='md' 
+                            lineThrough
+                            isSelected={item.instance.completed}
+                            onClick={(event) => handleCheck(event, index)}
+                          >
+                            {item.task.title}
+                          </Checkbox>
+                        </div>
                         <div className={styles['title-and-desc']}> 
                           <div className={styles['resolution-title']}>
-                            {item.task.title}
+                            
                           </div>
                           {item.task.description}
                         </div>
@@ -177,11 +236,9 @@ export default function Todo() {
                       </CardBody>
                       {/* TO DO make the resolution body div above not extend until freq */}
                       <div className={styles['task-freq']}>
-                        {item.instances.length} times a week
+                        {item.nInstances} times a week
                       </div>
-                    </Card> :
-                    null
-                ))
+                    </Card>
               ))
             }
           </div>

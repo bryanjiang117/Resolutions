@@ -16,17 +16,18 @@ export async function POST(req, res) {
             description = ${data.desc}
         WHERE resolution_id = ${data.resolution_id};`;
 
-        // delete task instances and tasks associated with resolution (cascade deletes tasks)
+        // delete this resolution's tasks and task instances using cascade
         await sql`
-        DELETE FROM task_instances
+        DELETE FROM tasks
         WHERE resolution_id = ${data.resolution_id};`;
         
         for (const task of data.taskItems) 
         {
             // insert updated tasks
             const task_response = await sql`
-            INSERT INTO tasks (title, description)
+            INSERT INTO tasks (resolution_id, title, description)
             VALUES (
+                ${data.resolution_id},
                 ${task.title},
                 ${task.description}
             )
@@ -36,9 +37,8 @@ export async function POST(req, res) {
             // insert updated task instances
             for (const task_instance of task.instances) {
                 await sql`
-                INSERT INTO task_instances (resolution_id, task_id, day_of_week, start_time, end_time, completed)
+                INSERT INTO task_instances (task_id, day_of_week, start_time, end_time, completed)
                 VALUES (
-                    ${data.resolution_id},
                     ${task_id},
                     ${task_instance.day_of_week},
                     ${task_instance.start_time},
@@ -47,7 +47,6 @@ export async function POST(req, res) {
                 );`;
             }
         }
-        
         
         return NextResponse.json({ response: 'successfully updated resolution' }, { status: 200 });
     } 

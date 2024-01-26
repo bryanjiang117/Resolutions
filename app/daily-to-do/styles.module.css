@@ -54,11 +54,14 @@
 }
 
 .task-body {
+  display: flex;
+  flex-direction: row;
   width: 80%;
   min-width: 20rem;
 }
 
 .title-and-desc {
+  margin-left: 2rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

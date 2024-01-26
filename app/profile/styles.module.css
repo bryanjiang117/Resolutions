@@ -5,3 +5,7 @@
 .nav-item {
   padding-right: 3rem;
 }
+
+.main-container {
+  height: calc(100% - 4rem);
+}

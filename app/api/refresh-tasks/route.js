@@ -10,7 +10,6 @@ export async function GET(request) {
         const task_response = await sql`SELECT * FROM tasks ORDER BY task_id;`;
 
         for (const task of task_response.rows) {
-            
             const instance_response = await sql`
             SELECT * from task_instances
             WHERE task_id = ${task.task_id};`;

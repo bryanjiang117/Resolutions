@@ -22,28 +22,26 @@ export async function POST(req, res) {
         {
             // post task and get its id
             const task_response = await sql`
-            INSERT INTO tasks (title, description)
+            INSERT INTO tasks (resolution_id, title, description)
             VALUES (
+                ${resolution_id},
                 ${task.title},
                 ${task.desc}
             )
+
             RETURNING task_id;`;
             const task_id = task_response.rows[0].task_id;
 
             for (const task_instance of task.instances) 
             {
-                const instance_response = await sql`
-                INSERT INTO task_instances (resolution_id, task_id, day_of_week, start_time, end_time, completed)
+                await sql`
+                INSERT INTO task_instances (task_id, day_of_week, start_time, end_time)
                 VALUES (
-                    ${resolution_id},
                     ${task_id},
                     ${task_instance.day_of_week},
                     ${task_instance.start_time},
-                    ${task_instance.end_time},
-                    ${task_instance.completed}
-                )
-                RETURNING task_instance_id;`;
-                const instance_id = instance_response.rows[0].task_instance_id;
+                    ${task_instance.end_time}
+                );`;
             }
         };
         
