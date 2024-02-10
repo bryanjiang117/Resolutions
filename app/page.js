@@ -499,14 +499,18 @@ export default function Home() {
                     </Skeleton>
                     <Divider className='mb-2 mt-2' />
                     {taskItems ? taskItems.map((item, index) => (
-                      <div key={index}>
+                      <div className={styles['task-container']} key={index}>
                         <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>
                           <Input 
+                            classNames={{
+                              mainWrapper: "h-full",
+                              inputWrapper: "h-9 min-h-2",
+                              input: "text-xs mt-1",
+                            }}
                             variant='flat'
                             isHoverable='false'
                             placeholder='Enter your Task Title...'
                             size='sm'
-                            // autoFocus
                             value={item.title}
                             onValueChange={(event) => handleChangeTitle(event, index)}
                             onKeyDown={handleEnter}
@@ -516,17 +520,20 @@ export default function Home() {
                         <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>
                           <CheckboxGroup
                             className={styles['checkbox-group']}
+                            classNames={{
+                              wrapper: 'justify-between my-0 h-6/12',
+                            }}
                             orientation="horizontal"
                             value={groupsSelected[index]}
                             onChange={(event) => handleCheck(event, index)}
                           >
+                            <CustomCheckbox value={0}>Sun</CustomCheckbox>
                             <CustomCheckbox value={1}>Mon</CustomCheckbox>
                             <CustomCheckbox value={2}>Tue</CustomCheckbox>
                             <CustomCheckbox value={3}>Wed</CustomCheckbox>
                             <CustomCheckbox value={4}>Thu</CustomCheckbox>
                             <CustomCheckbox value={5}>Fri</CustomCheckbox>
                             <CustomCheckbox value={6}>Sat</CustomCheckbox>
-                            <CustomCheckbox value={0}>Sun</CustomCheckbox>
                           </CheckboxGroup>
                         </Skeleton>
                       </div>
