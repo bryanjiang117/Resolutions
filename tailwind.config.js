@@ -15,11 +15,28 @@ module.exports = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
-        fontSize: {
+      fontSize: {
         xxs: '0.65rem',
-      }
+        xxxs: '0.60rem',
+      },
     },
   },
   darkMode: "class",
-  plugins: [nextui()],
+  plugins: [
+      nextui({
+        addCommonColors: true,
+        themes: {
+          light: {
+            colors: {
+              
+            }
+          },
+          dark: {
+            colors: {
+
+            }
+          },
+        }
+      })
+    ]
 }

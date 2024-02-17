@@ -391,6 +391,12 @@ export default function Home() {
     setTaskItems(updatedTaskItems);
   }
 
+  function handleChangeDesc(event, index) {
+    const updatedTaskItems = [...taskItems];
+    updatedTaskItems[index].description = event;
+    setTaskItems(updatedTaskItems);
+  }
+
   useEffect(() => {
     refreshResolutions();
   }, []);
@@ -493,7 +499,6 @@ export default function Home() {
                         maxRows={3}
                         value={desc}
                         onValueChange={setDesc}
-                        onKeyDown={(event) => handleEnter(event, onClose)}
                         id='modal-desc-field'
                       />
                     </Skeleton>
@@ -504,15 +509,31 @@ export default function Home() {
                           <Input 
                             classNames={{
                               mainWrapper: "h-full",
-                              inputWrapper: "h-9 min-h-2",
-                              input: "text-xs mt-1",
+                              inputWrapper: "h-7 min-h-5 bg-inherit data-[hover=true]:bg-inherit group-data-[focus=true]:bg-inherit",
+                              input: "text-sm mt-1",
                             }}
                             variant='flat'
-                            isHoverable='false'
+                            color='text-secondary'
+                            disableAnimation
                             placeholder='Enter your Task Title...'
                             size='sm'
                             value={item.title}
                             onValueChange={(event) => handleChangeTitle(event, index)}
+                            onKeyDown={handleEnter}
+                            id={`task-input-${index}`}
+                          />
+                          <Textarea
+                            classNames={{
+                              mainWrapper: 'h-full',
+                              inputWrapper: 'min-h-5 py-0 bg-inherit data-[hover=true]:bg-inherit group-data-[focus=true]:bg-inherit',
+                              input: 'text-xs mt-1',
+                            }}
+                            variant='flat'
+                            minRows={1}
+                            placeholder='Enter your Task Description...'
+                            size='sm'
+                            value={item.description}
+                            onValueChange={(event) => handleChangeDesc(event, index)}
                             onKeyDown={handleEnter}
                             id={`task-input-${index}`}
                           />
