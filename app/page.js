@@ -38,6 +38,8 @@ import {
   Skeleton,
 } from '@nextui-org/react';
 
+import { IoAddOutline } from "react-icons/io5";
+
 import Link from 'next/link';
 import Image from 'next/image';
 import {CustomCheckbox} from './CustomCheckbox';
@@ -407,10 +409,9 @@ export default function Home() {
         
         <NavbarMenuToggle
           aria-label={menuIsOpen ? 'Close Menu' : 'Open Menu'}
-          className='lg:hidden'
         />
 
-        <NavbarContent className={`${styles['nav-content']} hidden lg:flex`}>
+        <NavbarContent className={`${styles['nav-content']} hidden`}>
           {navItems.map((item, index) => (
             <NavbarItem key={index}>
               <Link href={item[1]}>
@@ -433,17 +434,6 @@ export default function Home() {
       </Navbar>
       
       <main className={styles['main-container']}>
-
-        <Button
-          className={styles['add-button']}
-          color="success"
-          // isIconOnly
-          onClick={handleOpenModal}
-          id='add-resolution-button'
-        >
-          {/* <img className={styles['add-icon']} src='add.svg' alt='add icon' /> */}
-          Add Resolution
-        </Button>
 
         <Modal size='lg' backdrop='blur' scrollBehavior='outside' isOpen={resIsOpen} onOpenChange={handleCloseModal}>
           <ModalContent>
@@ -507,6 +497,7 @@ export default function Home() {
                       <div className={styles['task-container']} key={index}>
                         <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>
                           <Input 
+                            className="focus:border-none"
                             classNames={{
                               mainWrapper: "h-full",
                               inputWrapper: "h-7 min-h-5 bg-inherit data-[hover=true]:bg-inherit group-data-[focus=true]:bg-inherit",
@@ -523,7 +514,8 @@ export default function Home() {
                             id={`task-input-${index}`}
                           />
                           <Textarea
-                            classNames={{
+                          className="focus:border-none"
+                              classNames={{
                               mainWrapper: 'h-full',
                               inputWrapper: 'min-h-5 py-0 bg-inherit data-[hover=true]:bg-inherit group-data-[focus=true]:bg-inherit',
                               input: 'text-xs mt-1',
@@ -603,25 +595,37 @@ export default function Home() {
               <div className={styles.loading}>
                 <CircularProgress size='md' aria-label='loading...' />
               </div> :
-              resolutionItems.map((item, index) => (
-                <Card 
-                  className={styles['resolution-item']} // source of "uncontrolled to controlled" warning
-                  isPressable isBlurred isHoverable disableRipple shadow='none' 
-                  onPress={handleOpenModal}
-                  key={index}
-                  id={`resolution-item-${index}`} 
-                >
-                  <CardBody className={styles['resolution-body']}>
-                    <div className={styles['title-and-desc']}> 
-                      <div className={styles['resolution-title']}>
-                        {item.title}
+              <>
+                {resolutionItems.map((item, index) => (
+                  <Card 
+                    className={styles['resolution-item']} // source of "uncontrolled to controlled" warning
+                    isPressable isBlurred isHoverable disableRipple shadow='none' 
+                    onPress={handleOpenModal}
+                    key={index}
+                    id={`resolution-item-${index}`} 
+                  >
+                    <CardBody className={styles['resolution-body']}>
+                      <div className={styles['title-and-desc']}> 
+                        <div className={styles['resolution-title']}>
+                          {item.title}
+                        </div>
+                        {item.description}
                       </div>
-                      {item.description}
-                    </div>
-                    
-                  </CardBody>
-                </Card>
-              ))
+                      
+                    </CardBody>
+                  </Card>
+                ))}
+
+                <Button
+                  className={styles['add-button']}
+                  variant='flat'
+                  startContent={<IoAddOutline />}
+                  onClick={handleOpenModal}
+                  id='add-resolution-button'
+                >
+                  Add Resolution
+                </Button>
+              </>
             }
           </div>
         </div>

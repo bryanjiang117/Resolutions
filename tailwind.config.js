@@ -16,7 +16,7 @@ module.exports = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       fontSize: {
-        xxs: '0.65rem',
+        xs: '0.65rem',
         xxxs: '0.60rem',
       },
     },
@@ -24,7 +24,6 @@ module.exports = {
   darkMode: "class",
   plugins: [
       nextui({
-        addCommonColors: true,
         themes: {
           light: {
             colors: {
@@ -33,7 +32,23 @@ module.exports = {
           },
           dark: {
             colors: {
-
+              // foreground: '#c4841d',
+              primary: {
+                foreground: '#DAA520',
+                background: '#DAA520',
+                DEFAULT: '#DAA520',
+                50: '#312107',
+                100: '#62420e', 
+                200: '#936316',
+                300: '#c4841d', 
+                400: '#f5a524',
+                500: '#f7b750',
+                600: '#f9c97c',
+                700: '#fbdba7',
+                800: '#fdedd3',
+                900: '#fefce8'
+              },
+              focus: '#DAA520',
             }
           },
         }

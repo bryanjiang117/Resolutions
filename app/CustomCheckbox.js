@@ -2,14 +2,14 @@ import {useCheckbox, Chip, VisuallyHidden, tv} from "@nextui-org/react";
 
 const checkbox = tv({
   slots: {
-    base: "border-default hover:bg-default-200 px-1 h-7",
-    content: "text-default-400 text-xxs"
+    base: "hover:bg-primary-100 px-1 h-7",
+    content: "text-primary text-xs"
   },
   variants: {
     isSelected: {
       true: {
-        base: "border-primary bg-primary hover:bg-primary-500 hover:border-primary-500",
-        content: "text-primary-foreground text-xxs"
+        base: "bg-primary hover:bg-primary-500",
+        content: "text-primary-50 text-xs"
       }
     },
     isFocusVisible: {
@@ -45,7 +45,7 @@ export const CustomCheckbox = (props) => {
             content: styles.content(),
           }}
           color="primary"
-          variant="faded"
+          variant="flat"
           {...getLabelProps()}
         >
           {children ? children : isSelected ? "Enabled" : "Disabled"}
