@@ -2,20 +2,19 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from "next/server";
 import { sql } from '@vercel/postgres';
-import { parse } from "url";
 
 export async function GET(request) {
     try
     {
-        const parsedUrl = parse(request.url, true);
-        const { resolution_id } = parsedUrl.query;
+        const url = new URL(request.url);
+        const resolution_id = url.searchParams.get('resolution_id');
         const taskResponse = await sql`
         SELECT * FROM tasks
         WHERE resolution_id = ${resolution_id};`;
 
         let taskItems = [];
         for (const task of taskResponse.rows) {
-
+            console.log("fetch-tasks: ", task);
             const instanceResponse = await sql`
             SELECT * FROM task_instances
             WHERE task_id = ${task.task_id};`;
@@ -36,4 +35,4 @@ export async function GET(request) {
         console.log(error);
         return NextResponse.json({ error }, { status: 500 });
     }
-}
+}   

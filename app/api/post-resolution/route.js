@@ -28,7 +28,6 @@ export async function POST(req, res) {
                 ${task.title},
                 ${task.desc}
             )
-
             RETURNING task_id;`;
             const task_id = task_response.rows[0].task_id;
 
