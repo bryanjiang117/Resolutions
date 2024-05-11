@@ -1,33 +1,16 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  Button,
-  Input,
-  CheckboxGroup, 
-  Textarea, 
   Card, 
-  CardHeader, 
   CardBody, 
-  CardFooter,
   Navbar,
-  NavbarBrand,
   NavbarContent,
   NavbarItem, 
   NavbarMenuToggle, 
   NavbarMenu, 
   NavbarMenuItem, 
-  MenuItem, 
-  Modal, 
-  ModalContent, 
-  ModalHeader, 
-  ModalBody, 
-  ModalFooter,
   CircularProgress,
-  Dropdown, 
-  DropdownTrigger,
-  DropdownMenu, 
-  DropdownItem,
   Checkbox,
 } from '@nextui-org/react';
 import Link from 'next/link';
@@ -38,18 +21,7 @@ export default function Todo() {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   // task list
   const [listIsLoading, setListIsLoading] = useState(false);
-  const [taskItems, setTaskItems] = useState([]);
   const [tasksToday, setTasksToday] = useState([]);
-  // modal 
-  const [selectedId, setSelectedId] = useState(-1);
-  const [resIsOpen, setResIsOpen] = useState(false);
-  const [resOpenType, setResOpenType] = useState('none');
-  const [title, setTitle] = useState(''); 
-  const [desc, setDesc] = useState('');
-  const [tasks, setTasks] = useState([]);
-  const [modalIsLoading, setModalIsLoading] = useState(false);
-  const [groupSelected, setGroupSelected] = useState([]);
-  const [taskInstances, setTaskInstances] = useState([]);
 
   const navItems = [['Profile', 'profile'], ['Resolutions', '/'], ['Daily To-Do', 'daily-to-do']];
 
@@ -59,14 +31,13 @@ export default function Todo() {
     try 
     {
       setListIsLoading(true);
-      const response = await fetch('/api/refresh-tasks');
+      const response = await fetch('/api/fetch-task-instances');
 
       if (!response.ok)
       {
         console.log('something went wrong with fetching tasks');
       }
       const responseData = await response.json();
-      setTaskItems(responseData.response); 
       const updatedTasksToday = responseData.response.reduce((total, item) => {
         const todaysInstance = item.instances.filter((instance) => instance.day_of_week === (new Date()).getDay());
         return (todaysInstance.length > 0 ? 
@@ -142,9 +113,6 @@ export default function Todo() {
     if (regex.test(event.target.id)) 
     {
       const key = parseInt(event.target.id.substring(idPrefix.length));
-      // setTitle(TaskItems[key].title);
-      // setDesc(TaskItems[key].description);
-      // setSelectedId(TaskItems[key].resolution_id);
       setResOpenType('update');
     } else if (event.target.id == 'add-resolution-button')
     {
