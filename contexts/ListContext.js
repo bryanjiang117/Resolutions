@@ -6,7 +6,7 @@ export const useList = () => useContext(ListContext);
 
 export const ListProvider = ({children}) => 
 { 
-  const [listIsLoading, setListIsLoading] = useState(false);
+  const [listIsLoading, setListIsLoading] = useState(true);
   const [resolutionItems, setResolutionItems] = useState(['']);
 
   // add a resolution to the database
@@ -42,7 +42,7 @@ export const ListProvider = ({children}) =>
     }
     finally 
     {
-      refreshResolutions();
+      fetchResolutions();
     }
   }
 
@@ -78,7 +78,7 @@ export const ListProvider = ({children}) =>
     {
       console.log(error);
     }
-    refreshResolutions();
+    fetchResolutions();
   }
 
   // delete all resolutions from table (for now)
@@ -107,15 +107,15 @@ export const ListProvider = ({children}) =>
     {
       console.log(error);
     }
-    refreshResolutions();
+    fetchResolutions();
   }
 
   // fetch the current resolutions from database
-  async function refreshResolutions() 
+  async function fetchResolutions() 
   {
     try 
     {
-      setListIsLoading(true);
+      await setListIsLoading(true);
       const response = await fetch('/api/fetch-resolutions', {
         headers: {
           'Cache-Control': 'no-cache', // This tells the browser to fetch the data from the server without using the cache
@@ -148,7 +148,7 @@ export const ListProvider = ({children}) =>
     postResolution,
     updateResolution,
     deleteResolution,
-    refreshResolutions,
+    fetchResolutions,
   }} >
     {children}
   </ListContext.Provider>

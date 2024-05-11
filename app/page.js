@@ -8,20 +8,23 @@ import ResolutionModal from '/components/ResolutionModal';
 import ResolutionList from '/components/ResolutionList';
 
 export default function Home() {  
-  const { refreshResolutions } = useList();
+  const { fetchResolutions } = useList();
 
   useEffect(() => {
-    refreshResolutions();
+    fetchResolutions();
   }, []);
 
   return (
-    <>
-      <Navbar />
-      
-      <main className={styles['main-container']}>
-        <ResolutionModal />
-        <ResolutionList /> 
-      </main>
-    </>
-  )
+      <>
+        <Navbar />
+
+        <main className={styles['main-container']}>
+
+          <ResolutionModal />
+
+          <ResolutionList /> 
+
+        </main>
+      </>
+  );
 }

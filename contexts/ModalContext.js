@@ -42,7 +42,8 @@ export const ModalProvider = ({children}) =>
     {
       setModalIsLoaded(false);
       const query = new URLSearchParams({resolution_id: resolution_id}).toString();
-      const response = await fetch(`/api/fetch-tasks?${query}`);
+      const { signal } = new AbortController()
+      const response = await fetch(`/api/fetch-tasks?${query}`, { revalidate: 0 });
 
       if (!response.ok) 
       {

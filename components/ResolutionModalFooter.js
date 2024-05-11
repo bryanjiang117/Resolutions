@@ -66,11 +66,11 @@ export function ResolutionModalFooter()
     {
       updateResolution(selectedId, title, desc, updatedTaskItems);
     }
+    setResModalIsOpen(false);
     setTitle('');
     setDesc('');
     setTaskItems([]);
     setGroupsSelected([[]]);
-    setResModalIsOpen(false);
     setModalIsLoaded(true);
   }
 
@@ -78,10 +78,13 @@ export function ResolutionModalFooter()
   async function handleCancelRes(event) 
   {
     setModalIsLoaded(false);
+    setResModalIsOpen(false);
+    // use artificial await Promise to use setTimeout in an async function
+    // this is to prevent modal content from disappearing before it fully closes
+    await new Promise(resolve => setTimeout(resolve, 100));
     setTitle('');
     setDesc('');
-    setResOpenType('none');
-    setResModalIsOpen(false);
+    setResOpenType('none')
     setModalIsLoaded(true);
   }
   

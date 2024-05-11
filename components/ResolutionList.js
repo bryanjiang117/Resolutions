@@ -20,8 +20,7 @@ const ResolutionList = () => {
     resolutionItems,
   } = useList();
 
-  const { 
-    fetchTasks,
+  const { fetchTasks,
     setTitle, 
     setDesc, 
     setSelectedId, 
@@ -49,7 +48,6 @@ const ResolutionList = () => {
     }
     setResModalIsOpen(true);
   }
-
   return (
     <div className={styles['list-horizontal-container']}>
       <div className={styles['list-vertical-container']}>
