@@ -9,6 +9,7 @@ export async function GET(request) {
         await sql`DROP TABLE IF EXISTS task_instances;`;
         await sql`DROP TABLE IF EXISTS tasks;`;
         await sql`DROP TABLE IF EXISTS resolutions;`;
+        await sql`DROP TABLE IF EXISTS users`;
 
         await sql`CREATE TABLE IF NOT EXISTS resolutions (
             resolution_id SERIAL PRIMARY KEY,
@@ -24,7 +25,7 @@ export async function GET(request) {
             description varchar(255)
         );`;
         
-        const response = await sql`
+        await sql`
         CREATE TABLE IF NOT EXISTS task_instances (
             task_instance_id SERIAL PRIMARY KEY,
             task_id INTEGER REFERENCES tasks(task_id) ON DELETE CASCADE,
@@ -33,8 +34,23 @@ export async function GET(request) {
             end_time TIME,
             completed BOOLEAN NOT NULL DEFAULT FALSE
         );`;
+
+        await sql`
+        CREATE TABLE IF NOT EXISTS users (
+            user_id SERIAL PRIMARY KEY,
+            email varchar(255),
+            password varchar(255)
+        );`;
+
+        // seeding database
+        await sql`
+        INSERT INTO users (email, password)
+        VALUES (
+            'haozhoujiang@gmail.com',
+            'a'
+        );`;
         
-        return NextResponse.json({ response }, {status: 200});
+        return NextResponse.json({ result: 'success' }, {status: 200});
     }
     catch (error) 
     {

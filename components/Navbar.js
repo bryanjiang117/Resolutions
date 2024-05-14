@@ -14,7 +14,7 @@ import styles from '/app/styles.module.css';
 
 function NavbarComponent() {  
   const [menuIsOpen, setMenuIsOpen] = useState(false);
-  const navItems = [['Profile', 'profile'], ['Resolutions', '/'], ['Daily To-Do', 'daily-to-do']];
+  const navItems = [['Profile', 'profile'], ['Resolutions', '/'],  ['Daily To-Do', 'daily-to-do']];
 
   return (
     <Navbar className={styles.navbar} onMenuOpenChange={setMenuIsOpen}>
