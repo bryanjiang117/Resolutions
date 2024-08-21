@@ -11,6 +11,7 @@ import {
 } from '@nextui-org/react';
 import Link from 'next/link';
 import styles from '/app/styles.module.css';
+import { signOut } from '/auth';
 
 function NavbarComponent() {  
   const [menuIsOpen, setMenuIsOpen] = useState(false);
@@ -22,7 +23,7 @@ function NavbarComponent() {
       <NavbarMenuToggle
         aria-label={menuIsOpen ? 'Close Menu' : 'Open Menu'}
       />
-
+{/* 
       <NavbarContent className={`${styles['nav-content']} hidden`}>
         {navItems.map((item, index) => (
           <NavbarItem key={index}>
@@ -31,7 +32,7 @@ function NavbarComponent() {
             </Link>
           </NavbarItem>
         ))}
-      </NavbarContent>
+      </NavbarContent> */}
 
       <NavbarMenu>
         {navItems.map((item, index) => (
@@ -41,6 +42,17 @@ function NavbarComponent() {
             </Link>
           </NavbarMenuItem>
         ))}
+        <form
+          action={async() => 
+          {
+            await signOut();
+            location.reload; // reloads document since nothing happens sometimes when signOut() is called
+          }}
+        >
+          <button className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
+            Sign Out
+          </button>
+        </form>
       </NavbarMenu>
 
     </Navbar>

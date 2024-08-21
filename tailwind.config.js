@@ -10,6 +10,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        'sm': '300px',
+        'md': '600px',
+        'lg': '1000px'
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
@@ -19,6 +24,9 @@ module.exports = {
         xs: '0.65rem',
         xxxs: '0.60rem',
       },
+      maxWidth: {
+        '120': '30rem',
+      }
     },
   },
   darkMode: "class",

@@ -47,8 +47,6 @@ export const { auth, signIn, signOut } = NextAuth(
           if (!user) return null; // returning null prevents user from logging in
           if (password === user.password) return user;
         }
-
-        return await getUser(email);
         
         // not able to validate
         console.log('Invalid Credentials. Failed to login');
