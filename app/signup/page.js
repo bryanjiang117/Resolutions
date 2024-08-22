@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Checkbox, Input, Link } from "@nextui-org/react";
+import { Button, Input, Link } from "@nextui-org/react";
 import { MailIcon } from '/app/assets/MailIcon.js';
 import { LockIcon } from '/app/assets/LockIcon.js';
 import { authenticate } from '/lib/actions';
@@ -9,14 +9,12 @@ import { authenticate } from '/lib/actions';
 export default function Login() {
   const [ email, setEmail ] = useState("");
   const [ password, setPassword ] = useState("");
-  const [ rememberMe, setRememberMe ] = useState(false);
  
   const handleSubmit = async (event) => {
     const formData = 
     {
       email: email,
       password: password,
-      rememberMe: rememberMe
     };
     try 
     {
@@ -41,7 +39,7 @@ export default function Login() {
           value={email}
           onChange={(event) => {setEmail(event.target.value)}}
           required
-          autoComplete="email"
+          autoComplete="new-email"
         />
 
         <Input
@@ -54,22 +52,8 @@ export default function Login() {
           value={password}
           onChange={(event) => {setPassword(event.target.value)}}
           required
-          autoComplete="current-password"
+          autoComplete="new-password"
         />
-
-        <div className="flex w-full justify-between py-1 px-1 justify-between">
-          <Checkbox
-            isSelected={rememberMe}
-            onChange={() => setRememberMe((prevState) => !prevState)}
-            classNames={{label: "text-small"}}
-            color="secondary"
-          >
-            Remember me
-          </Checkbox>
-          <Link color="primary" href="#" size="sm">
-            Forgot password?
-          </Link>
-        </div>
 
         <div className="flex w-full py-1 justify-start gap-2">
           <Button 
@@ -77,14 +61,14 @@ export default function Login() {
             className="w-full text-white"
             onPress={handleSubmit}
           >
-            Log In
+            Sign Up
           </Button>
         </div>
 
         <div className="py-1 flex w-full justify-center text-sm">
-          Need an account? 
-          <Link href="/signup" className="ml-2 text-sm underline hover:text-primary">
-            Sign Up
+          Already have an account? 
+          <Link href="/login" className="ml-2 text-sm underline hover:text-primary">
+            Log In
           </Link>
         </div>
       </div>

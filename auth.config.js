@@ -3,7 +3,8 @@ export const authConfig =
   pages: 
   {
     signIn: '/login',
-    // signOut: '',
+    signOut: '/login',
+    signUp: '/signup',
     // error: '',
   },  
   callbacks: 
@@ -12,7 +13,7 @@ export const authConfig =
     {
       const { nextUrl } = request;
       const isLoggedIn = !!auth?.user;
-      const needsLogin = !nextUrl.pathname.startsWith('/login');
+      const needsLogin = !(nextUrl.pathname.startsWith('/login') || nextUrl.pathname.startsWith('/signup'));
       console.log(nextUrl.pathname);
       if (needsLogin)
       {
