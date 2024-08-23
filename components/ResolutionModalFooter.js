@@ -37,7 +37,7 @@ export function ResolutionModalFooter()
   const router = useRouter();
 
   // saves resolution for adding or updating
-  function handleSaveRes(event) 
+  async function handleSaveRes(event) 
   {
     setModalIsLoaded(false);
     const updatedTaskItems = taskItems.map((task, taskIndex) => {

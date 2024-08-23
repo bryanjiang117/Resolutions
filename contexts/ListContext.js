@@ -40,10 +40,7 @@ export const ListProvider = ({children}) =>
     {
       console.log(error);
     }
-    finally 
-    {
-      fetchResolutions();
-    }
+    fetchResolutions();
   }
 
     // update a resolution with new values
