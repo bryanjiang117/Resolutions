@@ -35,6 +35,7 @@ export const ListProvider = ({children}) =>
       {
         console.log('something went wrong with posting resolution');
       }
+      console.log('posted');
     }
     catch (error)
     {
@@ -81,7 +82,6 @@ export const ListProvider = ({children}) =>
   // delete all resolutions from table (for now)
   async function deleteResolution(id) 
   {
-    // console.log('delete resolution');
     try
     {
       setListIsLoading(true);
@@ -99,6 +99,7 @@ export const ListProvider = ({children}) =>
       {
         console.log('something went wrong with deleting resolutions');  
       }
+      console.log('deleted');
     }
     catch (error) 
     {
@@ -133,6 +134,7 @@ export const ListProvider = ({children}) =>
     }
     finally 
     {
+      console.log('fetched');
       setListIsLoading(false);
     }
   }
