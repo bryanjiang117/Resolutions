@@ -7,7 +7,6 @@ import {
 } from '@nextui-org/react';
 import { useModal } from '/contexts/ModalContext';
 import { useList } from '/contexts/ListContext';
-import { useRouter } from 'next/navigation';
 
 export function ResolutionModalFooter()
 {
@@ -33,8 +32,6 @@ export function ResolutionModalFooter()
     postResolution,
     updateResolution,
   } = useList();
-
-  const router = useRouter();
 
   // saves resolution for adding or updating
   async function handleSaveRes(event) 
@@ -65,13 +62,13 @@ export function ResolutionModalFooter()
     {
       await postResolution(title, desc, updatedTaskItems);
       console.log('refreshed');
-      router.refresh();
+      window.location.reload();
     } 
     else if (resOpenType == 'update') 
     {
       await updateResolution(selectedId, title, desc, updatedTaskItems);
       console.log('refreshed');
-      router.refresh();
+      window.location.reload();
     }
     setResModalIsOpen(false);
     setTitle('');
