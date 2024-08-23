@@ -42,6 +42,7 @@ export const ListProvider = ({children}) =>
     }
     finally 
     {
+      router.refresh();
       fetchResolutions();
     }
   }
@@ -73,6 +74,7 @@ export const ListProvider = ({children}) =>
         console.log('something went wrong with updating resolution');
       }
       console.log(response);
+      router.refresh();
     }
     catch (error) 
     {
@@ -107,6 +109,7 @@ export const ListProvider = ({children}) =>
     {
       console.log(error);
     }
+    router.refresh();
     fetchResolutions();
   }
 
