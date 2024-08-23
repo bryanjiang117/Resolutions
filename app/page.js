@@ -7,6 +7,8 @@ import Navbar from '/components/Navbar';
 import ResolutionModal from '/components/ResolutionModal';
 import ResolutionList from '/components/ResolutionList';
 
+export const dynamic = 'force-dynamic';
+
 export default function Home() {  
   const { fetchResolutions } = useList();
 
