@@ -27,7 +27,7 @@ export function ResolutionModalHeader()
 
   const {
     deleteResolution,
-    refreshResolutions,
+    fetchResolutions,
   } = useList();
 
   // handles closing the modal with built-in methods (ex: clicking outside)
@@ -47,7 +47,7 @@ export function ResolutionModalHeader()
   {
     deleteResolution(selectedId);
     handleCloseModal();
-    refreshResolutions();
+    fetchResolutions();
   }
 
   return (

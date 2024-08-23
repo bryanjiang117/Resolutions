@@ -1,10 +1,8 @@
 'use client'
 
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import {
   Navbar,
-  NavbarContent,
-  NavbarItem, 
   NavbarMenuToggle, 
   NavbarMenu, 
   NavbarMenuItem, 
@@ -22,40 +20,42 @@ function NavbarComponent() {
   };
 
   return (
-    <Navbar className={styles.navbar} isMenuOpen={menuIsOpen} onMenuOpenChange={setMenuIsOpen}>
-      
-      <NavbarMenuToggle
-        aria-label={menuIsOpen ? 'Close Menu' : 'Open Menu'}
-        onClick={handleToggleMenu}
-      />
+    <div>
+      <Navbar className={styles.navbar} isMenuOpen={menuIsOpen} onMenuOpenChange={setMenuIsOpen}>
+        
+        <NavbarMenuToggle
+          aria-label={menuIsOpen ? 'Close Menu' : 'Open Menu'}
+          onClick={handleToggleMenu}
+        />
 
-      <NavbarMenu>
-        {navItems.map((item, index) => (
-          <NavbarMenuItem key={index}>
-            <Link href={item[1]}>
-              {item[0]}
-            </Link>
-          </NavbarMenuItem>
-        ))}
-        <NavbarMenuItem>
-          <form
-            action={async() => 
-            {
-              await signOut();
-              location.reload; // reloads document since nothing happens sometimes when signOut() is called
-            }}
-          >
-            <div
-              className='cursor-pointer'
-              onClick={() => {signOut({ callBackUrl: '/'})}}  
+        <NavbarMenu>
+          {navItems.map((item, index) => (
+            <NavbarMenuItem key={index}>
+              <Link href={item[1]}>
+                {item[0]}
+              </Link>
+            </NavbarMenuItem>
+          ))}
+          <NavbarMenuItem>
+            <form
+              action={async() => 
+              {
+                await signOut();
+                location.reload; // reloads document since nothing happens sometimes when signOut() is called
+              }}
             >
-              Sign Out
-            </div>
-          </form>
-        </NavbarMenuItem>
-      </NavbarMenu>
+              <div
+                className='cursor-pointer'
+                onClick={() => {signOut({ callBackUrl: '/'})}}  
+              >
+                Sign Out
+              </div>
+            </form>
+          </NavbarMenuItem>
+        </NavbarMenu>
 
-    </Navbar>
+      </Navbar>
+    </div>
   );
 }
 
