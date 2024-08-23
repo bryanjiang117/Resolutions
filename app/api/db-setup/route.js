@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
+import bcrypt from 'bcrypt';
 
 export async function GET(request) {
     try 
@@ -42,12 +43,18 @@ export async function GET(request) {
             password varchar(255)
         );`;
 
-        // seeding database
+        // deleting users
+        await sql`
+        TRUNCATE TABLE users;   
+        `; 
+        // seeding users 
+        const email = 'haozhoujiang@gmail.com';
+        const password = await bcrypt.hash('a', 10);
         await sql`
         INSERT INTO users (email, password)
         VALUES (
-            'haozhoujiang@gmail.com',
-            'a'
+            ${email},
+            ${password}
         );`;
         
         return NextResponse.json({ result: 'success' }, {status: 200});

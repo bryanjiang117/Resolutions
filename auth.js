@@ -5,6 +5,7 @@ import Credentials from 'next-auth/providers/credentials';
 import { authConfig } from './auth.config';
 import { sql } from "@vercel/postgres";
 import { z } from 'zod';
+import bcrypt from 'bcrypt';
 
 async function getUser(email)
 {
@@ -43,9 +44,18 @@ export const { auth, signIn, signOut } = NextAuth(
         if (parsedCredentials.success)
         {
           const { email, password } = parsedCredentials.data;
+
           const user = await getUser(email);
           if (!user) return null; // returning null prevents user from logging in
-          if (password === user.password) return user;
+          
+          console.log('---------------------------------------------------------------------');
+          console.log(password);
+          console.log(user.password);
+          console.log(await bcrypt.compare(password, user.password))
+          console.log('---------------------------------------------------------------------');
+          
+          const isPasswordValid = await bcrypt.compare(password, user.password);
+          if (isPasswordValid) return user;
         }
         
         // not able to validate

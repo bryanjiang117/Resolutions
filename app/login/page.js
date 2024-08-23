@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Checkbox, Input, Link } from "@nextui-org/react";
+import { Button, Checkbox, Input, Link } from "@nextui-org/react";
 import { MailIcon } from '/app/assets/MailIcon.js';
 import { LockIcon } from '/app/assets/LockIcon.js';
 import { authenticate } from '/lib/actions';
@@ -16,7 +16,7 @@ export default function Login() {
     {
       email: email,
       password: password,
-      rememberMe: rememberMe
+      // rememberMe: rememberMe
     };
     try 
     {
