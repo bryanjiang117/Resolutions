@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
 
+export const revalidate = 1;
 export async function GET(request) {
     try 
     {
