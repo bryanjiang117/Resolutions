@@ -41,7 +41,7 @@ export function ResolutionModalBody({ onClose })
   }
 
   // saves resolution for adding or updating
-  function handleSaveRes(event) 
+  async function handleSaveRes(event) 
   {
     setModalIsLoaded(false);
     const updatedTaskItems = taskItems.map((task, taskIndex) => {
@@ -68,13 +68,13 @@ export function ResolutionModalBody({ onClose })
 
     if (resOpenType == 'add') 
     {
-      postResolution(title, desc, updatedTaskItems);
-      // router.refresh();
+      await postResolution(title, desc, updatedTaskItems);
+      window.location.reload();
     } 
     else if (resOpenType == 'update') 
     {
-      updateResolution(selectedId, title, desc, updatedTaskItems);
-      // router.refresh();
+      await updateResolution(selectedId, title, desc, updatedTaskItems);
+      window.location.reload();
     }
     setTitle('');
     setDesc('');

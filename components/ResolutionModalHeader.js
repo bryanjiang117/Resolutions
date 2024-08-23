@@ -46,10 +46,10 @@ export function ResolutionModalHeader()
   }
 
   // deletes modal
-  function handleDelete(event) 
+  async function handleDelete(event) 
   {
-    deleteResolution(selectedId);
-    // router.refresh();
+    await deleteResolution(selectedId);
+    window.location.reload();
     handleCloseModal();
   }
 
