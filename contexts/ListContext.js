@@ -31,7 +31,8 @@ export const ListProvider = ({children}) =>
           'Cache-Control': 'no-cache',  // Add this line
           'Pragma': 'no-cache',  // Add this line
           'Expires': '0',  // Add this line
-        }
+        },
+        next: { revalidate: 0 }
       });
       
       if (!response.ok)
@@ -70,7 +71,8 @@ export const ListProvider = ({children}) =>
           'Cache-Control': 'no-cache',  // Add this line
           'Pragma': 'no-cache',  // Add this line
           'Expires': '0',  // Add this line
-        }
+        },
+        next: { revalidate: 0 }
       });
 
       if (!response.ok) {
@@ -101,7 +103,8 @@ export const ListProvider = ({children}) =>
           'Cache-Control': 'no-cache',  // Add this line
           'Pragma': 'no-cache',  // Add this line
           'Expires': '0',  // Add this line
-        }
+        },
+        next: { revalidate: 0 }
       });
 
       if (!response.ok) 
@@ -128,7 +131,8 @@ export const ListProvider = ({children}) =>
           'Cache-Control': 'no-cache', // This tells the browser to fetch the data from the server without using the cache
           'Pragma': 'no-cache', // Ensures compatibility with HTTP/1.0 caches (older caches)
           'Expires': '0',  // Add this line
-        }
+        },
+        next: { revalidate: 0 }
       });
 
       if (!response.ok)
