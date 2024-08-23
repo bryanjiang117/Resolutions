@@ -11,6 +11,7 @@ import {
 import styles from '/app/styles.module.css';
 import { useModal } from '/contexts/ModalContext';
 import { useList } from '/contexts/ListContext';
+import { useRouter } from 'next/navigation';
 
 export function ResolutionModalHeader()
 {
@@ -30,6 +31,8 @@ export function ResolutionModalHeader()
     fetchResolutions,
   } = useList();
 
+  const router = useRouter();
+
   // handles closing the modal with built-in methods (ex: clicking outside)
   function handleCloseModal(event) 
   {
@@ -46,8 +49,8 @@ export function ResolutionModalHeader()
   function handleDelete(event) 
   {
     deleteResolution(selectedId);
+    router.refresh();
     handleCloseModal();
-    fetchResolutions();
   }
 
   return (

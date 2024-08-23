@@ -11,6 +11,7 @@ import styles from '/app/styles.module.css';
 import { useModal } from '/contexts/ModalContext';
 import { useList } from '/contexts/ListContext';
 import { ResolutionModalTasks } from './ResolutionModalTasks';
+import { useRouter } from 'next/navigation';
 
 export function ResolutionModalBody({ onClose }) 
 {
@@ -32,6 +33,8 @@ export function ResolutionModalBody({ onClose })
     updateResolution,
   } = useList();
 
+  const router = useRouter();
+  
   function handleAddTask(event) 
   {
     taskItems ? setTaskItems([...taskItems, createTask('', '', [])]) : setTaskItems([createTask('', '', [])]);
@@ -66,10 +69,12 @@ export function ResolutionModalBody({ onClose })
     if (resOpenType == 'add') 
     {
       postResolution(title, desc, updatedTaskItems);
+      router.refresh();
     } 
     else if (resOpenType == 'update') 
     {
       updateResolution(selectedId, title, desc, updatedTaskItems);
+      router.refresh();
     }
     setTitle('');
     setDesc('');
