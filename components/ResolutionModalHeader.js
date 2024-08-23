@@ -49,7 +49,7 @@ export function ResolutionModalHeader()
   function handleDelete(event) 
   {
     deleteResolution(selectedId);
-    router.refresh();
+    // router.refresh();
     handleCloseModal();
   }
 

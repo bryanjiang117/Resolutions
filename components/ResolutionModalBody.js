@@ -34,7 +34,7 @@ export function ResolutionModalBody({ onClose })
   } = useList();
 
   const router = useRouter();
-  
+
   function handleAddTask(event) 
   {
     taskItems ? setTaskItems([...taskItems, createTask('', '', [])]) : setTaskItems([createTask('', '', [])]);
@@ -69,12 +69,12 @@ export function ResolutionModalBody({ onClose })
     if (resOpenType == 'add') 
     {
       postResolution(title, desc, updatedTaskItems);
-      router.refresh();
+      // router.refresh();
     } 
     else if (resOpenType == 'update') 
     {
       updateResolution(selectedId, title, desc, updatedTaskItems);
-      router.refresh();
+      // router.refresh();
     }
     setTitle('');
     setDesc('');

@@ -64,12 +64,12 @@ export function ResolutionModalFooter()
     if (resOpenType == 'add') 
     {
       postResolution(title, desc, updatedTaskItems);
-      router.refresh();
+      // router.refresh();
     } 
     else if (resOpenType == 'update') 
     {
       updateResolution(selectedId, title, desc, updatedTaskItems);
-      router.refresh();
+      // router.refresh();
     }
     setResModalIsOpen(false);
     setTitle('');
