@@ -45,7 +45,7 @@ export const ListProvider = ({children}) =>
     {
       console.log(error);
     }
-    fetchResolutions();
+    await fetchResolutions();
   }
 
     // update a resolution with new values
@@ -84,7 +84,7 @@ export const ListProvider = ({children}) =>
     {
       console.log(error);
     }
-    fetchResolutions();
+    await fetchResolutions();
   }
 
   // delete all resolutions from table (for now)
@@ -117,7 +117,7 @@ export const ListProvider = ({children}) =>
     {
       console.log(error);
     }
-    fetchResolutions();
+    await fetchResolutions();
   }
 
   // fetch the current resolutions from database

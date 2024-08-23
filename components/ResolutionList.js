@@ -1,9 +1,5 @@
 'use client'
 
-export const revalidate = 1
-export const dynamic = 'force-dynamic'
-export const fetchCache = 'force-no-store'
-
 import {
   Button,
   Card, 

@@ -63,13 +63,15 @@ export function ResolutionModalFooter()
 
     if (resOpenType == 'add') 
     {
-      postResolution(title, desc, updatedTaskItems);
-      // router.refresh();
+      await postResolution(title, desc, updatedTaskItems);
+      console.log('refreshed');
+      router.refresh();
     } 
     else if (resOpenType == 'update') 
     {
-      updateResolution(selectedId, title, desc, updatedTaskItems);
-      // router.refresh();
+      await updateResolution(selectedId, title, desc, updatedTaskItems);
+      console.log('refreshed');
+      router.refresh();
     }
     setResModalIsOpen(false);
     setTitle('');
