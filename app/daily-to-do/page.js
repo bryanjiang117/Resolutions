@@ -26,7 +26,7 @@ export default function Todo() {
   const navItems = [['Profile', 'profile'], ['Resolutions', '/'], ['Daily To-Do', 'daily-to-do']];
 
   // fetch the current resolutions from database
-  async function refreshTasks() 
+  async function fetchTasks() 
   {
     try 
     {
@@ -38,20 +38,9 @@ export default function Todo() {
         console.log('something went wrong with fetching tasks');
       }
       const responseData = await response.json();
-      const updatedTasksToday = responseData.response.reduce((total, item) => {
-        const todaysInstance = item.instances.filter((instance) => instance.day_of_week === (new Date()).getDay());
-        return (todaysInstance.length > 0 ? 
-          [...total, 
-          {
-            task: item.task,
-            instance: todaysInstance[0],
-            nInstances: item.instances.length
-          }
-          ] :
-          total
-        );
-      }, [])
+      const updatedTasksToday = responseData.response.filter((task) => task.day_of_week === (new Date()).getDay());
       setTasksToday(updatedTasksToday);
+      console.log(updatedTasksToday);
     } 
     catch (error)
     {
@@ -124,13 +113,13 @@ export default function Todo() {
 
   function handleCheck(event, index) {
     const updatedTasksToday = [...tasksToday];
-    updatedTasksToday[index].instance.completed = !updatedTasksToday[index].instance.completed;
+    updatedTasksToday[index].completed = !updatedTasksToday[index].completed;
     setTasksToday(updatedTasksToday);
-    setTaskCompletion(tasksToday[index].instance.task_instance_id, updatedTasksToday[index].instance.completed);
+    setTaskCompletion(tasksToday[index].task_instance_id, updatedTasksToday[index].completed);
   }
 
   useEffect(() => {
-    refreshTasks();
+    fetchTasks();
   }, []);
 
   return (
@@ -173,39 +162,39 @@ export default function Todo() {
               <div className={styles.loading}>
                 <CircularProgress size='md' aria-label='loading...' />
               </div> :
-              tasksToday.map((item, index) => (
-                    <Card 
-                      className={styles['task-item']} // source of "uncontrolled to controlled" warning ?
-                      isPressable isBlurred isHoverable disableRipple shadow='none' 
-                      onClick={handleOpenModal}
-                      key={item.instance.task_instance_id}
-                      id={`task-item-${item.instance.task_instance_id}`} 
-                    >
-                      <CardBody className={styles['task-body']}>
-                        <div className='flex flex-col w-full'>
-                          <Checkbox 
-                            color='success' 
-                            size='md' 
-                            lineThrough
-                            isSelected={item.instance.completed}
-                            onClick={(event) => handleCheck(event, index)}
-                          >
-                            {item.task.title}
-                          </Checkbox>
-                        </div>
-                        <div className={styles['title-and-desc']}> 
-                          <div className={styles['resolution-title']}>
-                            
-                          </div>
-                          {item.task.description}
-                        </div>
+              tasksToday.map((task, index) => (
+                <Card 
+                  className={styles['task-item']} // source of "uncontrolled to controlled" warning ?
+                  isPressable isBlurred isHoverable disableRipple shadow='none' 
+                  onClick={handleOpenModal}
+                  key={task.task_instance_id}
+                  id={`task-item-${task.task_instance_id}`} 
+                >
+                  <CardBody className={styles['task-body']}>
+                    <div className='flex flex-col w-full'>
+                      <Checkbox 
+                        color='success' 
+                        size='md' 
+                        lineThrough
+                        isSelected={task.completed}
+                        onClick={(event) => handleCheck(event, index)}
+                      >
+                        {task.title}
+                      </Checkbox>
+                    </div>
+                    <div className={styles['title-and-desc']}> 
+                      <div className={styles['resolution-title']}>
                         
-                      </CardBody>
-                      {/* TO DO make the resolution body div above not extend until freq */}
-                      <div className={styles['task-freq']}>
-                        {item.nInstances} times a week
                       </div>
-                    </Card>
+                      {task.description}
+                    </div>
+                    
+                  </CardBody>
+                  {/* TO DO make the resolution body div above not extend until freq */}
+                  <div className={styles['task-freq']}>
+                    {task.instance_count} times a week
+                  </div>
+                </Card>
               ))
             }
           </div>

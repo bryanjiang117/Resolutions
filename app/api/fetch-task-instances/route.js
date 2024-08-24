@@ -6,22 +6,26 @@ import { sql } from '@vercel/postgres';
 export async function GET(request) {
     try
     {
-        const response = [];
-        const task_response = await sql`SELECT * FROM tasks ORDER BY task_id;`;
+        const data = await sql`
+        SELECT 
+            t.*, 
+            ti.*, 
+            (
+                SELECT COUNT(*)
+                FROM task_instances
+                WHERE task_instances.task_id = t.task_id
+            ) AS instance_count
+        FROM 
+            tasks t
+        RIGHT JOIN 
+            task_instances ti
+        ON 
+            t.task_id = ti.task_id
+        ORDER BY 
+            t.task_id;`;
+        const response = data.rows;
 
-        for (const task of task_response.rows) {
-            const instance_response = await sql`
-            SELECT * from task_instances
-            WHERE task_id = ${task.task_id};`;
-
-            response.push({
-                task: task,
-                instances: instance_response.rows
-            });
-            
-        }
-
-        return NextResponse.json({ response: response }, { status: 200 });
+        return NextResponse.json({ response }, { status: 200 });
     } 
     catch (error) 
     {
