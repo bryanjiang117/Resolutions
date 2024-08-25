@@ -10,6 +10,8 @@ import {
 import styles from './styles.module.css';
 import NavbarComponent from '@/components/Navbar';
 
+const daysOfTheWeek = ['M', 'T', 'W', 'Th', 'F', 'Sa', 'Su'];
+
 export default function Todo() {
   // task list
   const [listIsLoading, setListIsLoading] = useState(false);
@@ -123,10 +125,18 @@ export default function Todo() {
                       </div>
                       
                     </CardBody>
-                    {/* TO DO make the resolution body div above not extend until freq */}
-                    <div className={styles['task-freq']}>
-                      {task.instance_count} times a week
+                  
+                    <div className={styles['task-days-of-week']}>
+                      {daysOfTheWeek.map((day, index) => (
+                        <span 
+                          key={index} 
+                          className={task.days_of_week.includes(index + 1) ? 'text-primary' : 'text-gray-500'}
+                        >
+                          {day + ' '}
+                        </span>
+                      ))}
                     </div>
+
                   </Card>
                 ))}
               </>

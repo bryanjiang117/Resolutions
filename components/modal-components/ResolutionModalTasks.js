@@ -126,13 +126,13 @@ export function ResolutionModalTasks()
             value={groupsSelected[index]}
             onChange={(event) => handleCheck(event, index)}
           >
-            <CustomCheckbox value={0}>Sun</CustomCheckbox>
-            <CustomCheckbox value={1}>Mon</CustomCheckbox>
-            <CustomCheckbox value={2}>Tue</CustomCheckbox>
-            <CustomCheckbox value={3}>Wed</CustomCheckbox>
-            <CustomCheckbox value={4}>Thu</CustomCheckbox>
-            <CustomCheckbox value={5}>Fri</CustomCheckbox>
-            <CustomCheckbox value={6}>Sat</CustomCheckbox>
+            <CustomCheckbox value={0}>Mon</CustomCheckbox>
+            <CustomCheckbox value={1}>Tue</CustomCheckbox>
+            <CustomCheckbox value={2}>Wed</CustomCheckbox>
+            <CustomCheckbox value={3}>Thu</CustomCheckbox>
+            <CustomCheckbox value={4}>Fri</CustomCheckbox>
+            <CustomCheckbox value={5}>Sat</CustomCheckbox>
+            <CustomCheckbox value={6}>Sun</CustomCheckbox>
           </CheckboxGroup>
         </Skeleton>
       </div>

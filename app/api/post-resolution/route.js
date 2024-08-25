@@ -34,12 +34,10 @@ export async function POST(req, res) {
             for (const task_instance of task.instances) 
             {
                 await sql`
-                INSERT INTO task_instances (task_id, day_of_week, start_time, end_time)
+                INSERT INTO task_instances (task_id, day_of_week)
                 VALUES (
                     ${task_id},
                     ${task_instance.day_of_week},
-                    ${task_instance.start_time},
-                    ${task_instance.end_time}
                 );`;
             }
         };
