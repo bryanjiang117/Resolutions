@@ -9,9 +9,9 @@ import {
 } from '@nextui-org/react';
 import styles from '/app/styles.module.css';
 import { useModal } from '/contexts/ModalContext';
-import { ResolutionModalHeader } from './ResolutionModalHeader';
-import { ResolutionModalBody } from './ResolutionModalBody';
-import { ResolutionModalFooter } from './ResolutionModalFooter';
+import { ResolutionModalHeader } from './modal-components/ResolutionModalHeader';
+import { ResolutionModalBody } from './modal-components/ResolutionModalBody';
+import { ResolutionModalFooter } from './modal-components/ResolutionModalFooter';
 
 export function ResolutionModal() 
 {
