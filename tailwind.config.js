@@ -42,7 +42,7 @@ module.exports = {
             colors: {
               // foreground: '#c4841d',
               primary: {
-                foreground: '#DAA520',
+                foreground: '#E0E0E0',
                 background: '#DAA520',
                 DEFAULT: '#DAA520',
                 50: '#312107',
