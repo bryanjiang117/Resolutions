@@ -62,7 +62,6 @@ export default function Login() {
             isSelected={rememberMe}
             onChange={() => setRememberMe((prevState) => !prevState)}
             classNames={{label: "text-small"}}
-            color="secondary"
           >
             Remember me
           </Checkbox>
