@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Button, Input, Link } from "@nextui-org/react";
-import { MailIcon } from '/app/assets/MailIcon.js';
-import { LockIcon } from '/app/assets/LockIcon.js';
+import { MailIcon } from '/assets/MailIcon.js';
+import { LockIcon } from '/assets/LockIcon.js';
 import { authenticate } from '/lib/actions';
 
 export default function Login() {

@@ -4,24 +4,11 @@ import { useState } from 'react';
 import { Card, CardHeader, CardBody, CardFooter, Divider, Checkbox } from '@nextui-org/react';
 import styles from './styles.module.css';
 import NavbarComponent from '@/components/Navbar';
-import ListIcon from '@/app/assets/list-icon.svg';
+import ListIcon from '@/assets/list-icon.svg';
+import LineGraph from '@/components/LineGraph';
+import ProgressCircle from '@/components/ProgressCircle';
 
-export default function Profile() {
-  const [tasks, setTasks] = useState([
-    {
-      title: 'Go to the gym',
-      completed: false,
-    },
-    {
-      title: 'Do one leetcode question fdsfdsfdsfdsfsdf',
-      completed: false,
-    },
-    {
-      title: 'Go for a run',
-      completed: false,
-    }
-  ]);
-  const cardInfo = [
+const cardInfo = [
     {
       header: 'Streak',
       value: 14,
@@ -44,6 +31,23 @@ export default function Profile() {
     }
   ];
 
+export default function Profile() {
+  
+  const [tasks, setTasks] = useState([
+    {
+      title: 'Go to the gym',
+      completed: false,
+    },
+    {
+      title: 'Do one leetcode question fdsfdsfdsfdsfsdf',
+      completed: false,
+    },
+    {
+      title: 'Go for a run',
+      completed:false,
+    }
+  ]);
+
   function handleCheck(index) {
     const updatedTasks = tasks.map((task, i) => 
       i === index ? { ...task, completed: !task.completed } : task
@@ -55,14 +59,14 @@ export default function Profile() {
     <>
       <NavbarComponent />
 
-      <div className={`${styles['main-container']} flex justify-center items-center p-4`}>
+      <div className={`${styles['main-container']} flex justify-center items-center overflow-hidden p-4`}>
         <div className='flex flex-col gap-4 w-full h-full'>
         
           <div className='flex flex-[4] gap-4 w-full'>
 
-            <div className='flex flex-col flex-[3] gap-4 h-full'>
+            <div className='flex flex-col flex-[3] basis-[1px] min-w-0 gap-4 h-full'>
               <div className='flex flex-1 w-full gap-4'>
-                {cardInfo.map((card, i) => (
+                {cardInfo.map((card, i) => (  
                   <Card className='flex-1 p-2 self-stretch min-h-32 max-h-32 min-w-32' key={i}>
                     <CardHeader className='flex items-center justify-center w-full text-center text-gray-200 text-xs'>
                       {card.header}
@@ -80,10 +84,14 @@ export default function Profile() {
                   </Card>
                 ))}
               </div>
-              <Card className='flex-[3] w-full p-2' id="chart">
-                <CardHeader className='text-sm text-gray-200'>
-                  Task Completion Overtime
+              {/* min-w-[560px] because 4 cards and their gaps is 560px */}
+              <Card className='flex-[3] basis-[1px] w-full min-w-[560px] p-2 overflow-hidden' id="chart">
+                <CardHeader className='text-sm font-bold'>
+                  Task Completion
                 </CardHeader>
+                <CardBody className='pr-8 overflow-hidden '>
+                  <LineGraph />
+                </CardBody>
               </Card>
             </div>
 
@@ -114,21 +122,22 @@ export default function Profile() {
               <Card className='flex-[3] p-2'>
                 <CardHeader className='text-white'>
                   <ListIcon className='fill-current h-5 w-5'/>
-                  <span className='text-sm ml-2 text-gray-200'>
+                  <span className='text-sm ml-2'>
                     Tasks Today
                   </span>
                 </CardHeader>
-                <CardBody className='flex'>
+                <CardBody className='pt-1'>
                   {tasks.map((task, i) => {
                     return (
-                      <div key={i} className={`flex items-center w-full ${task.completed ? 'line-through text-gray-400' : ''}`}>
+                      <div key={i} className={`flex items-center w-full mb-1 ${task.completed ? 'line-through text-gray-400' : ''}`}>
                         {/* empty checkbox because truncate requires display block on the checkbox but that messes with the formatting */}
                         <Checkbox 
+                          size='sm'
                           lineThrough
                           className='w-full block flex-shrink-0' 
                           onChange={() => handleCheck(i)}
                         />
-                        <span className='truncate w-full block'>
+                        <span className='truncate w-full block text-sm'>
                           {task.title}
                         </span>
                       </div>
@@ -141,19 +150,34 @@ export default function Profile() {
 
           </div>
 
-          <div className='flex flex-[2] gap-4 w-full'>
-            {/* flex-[9] and flex[7] so the ratio is 9/16 to line up with the gap after the 3rd card at the top */}
-            <Card className='flex-[9] p-2 text-gray-200' id='resolutions'>
-              <CardHeader>
+          <div className="flex flex-[2] gap-4 w-full overflow-hidden">
+            {/* min-w-[416px] because 3 top cards and their gaps is 416px */}
+            <Card className="flex-[9] p-2 min-w-[416px]" id="resolutions">
+              <CardHeader className="text-sm font-bold">
                 Resolutions
               </CardHeader>
+              <CardBody className="flex items-center">
+                <div className="flex justify-around h-full w-full min-w-0 overflow-hidden">
+                  <div className="flex-1 basis-[0] min-w-0">
+                    <ProgressCircle percentage={46} label="92,980" subLabel="Cases" color="#4CAF50" />
+                  </div>
+                  <div className="flex-1 basis-[0] min-w-0">
+                    <ProgressCircle percentage={74} label="28,546" subLabel="Applications" color="#00BCD4" />
+                  </div>
+                  <div className="flex-1 basis-[0] min-w-0">
+                    <ProgressCircle percentage={14} label="14,008" subLabel="Products" color="#FF9800" />
+                  </div>
+                </div>
+              </CardBody>
             </Card>
-            <Card className='flex-[7] p-2 text-gray-200' id='milestones'>
-              <CardHeader>
+
+            <Card className="flex-[7] p-2" id="milestones">
+              <CardHeader className="text-sm font-bold">
                 Milestones
               </CardHeader>
             </Card>
           </div>
+
 
         </div>
       </div>
