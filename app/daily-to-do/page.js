@@ -130,7 +130,7 @@ export default function Todo() {
                       {daysOfTheWeek.map((day, index) => (
                         <span 
                           key={index} 
-                          className={task.days_of_week.includes(index + 1) ? 'text-primary' : 'text-gray-500'}
+                          className={task.days_of_week.includes(index) ? 'text-primary' : 'text-gray-500'}
                         >
                           {day + ' '}
                         </span>

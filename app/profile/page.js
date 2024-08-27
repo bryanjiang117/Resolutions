@@ -124,6 +124,7 @@ export default function Profile() {
                       <div key={i} className={`flex items-center w-full ${task.completed ? 'line-through text-gray-400' : ''}`}>
                         {/* empty checkbox because truncate requires display block on the checkbox but that messes with the formatting */}
                         <Checkbox 
+                          lineThrough
                           className='w-full block flex-shrink-0' 
                           onChange={() => handleCheck(i)}
                         />
