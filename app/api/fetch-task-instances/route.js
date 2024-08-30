@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
 import { revalidateTag } from "next/cache";
+import { convertDayOfWeek } from '@/lib/utility';
 
 export async function GET(request) {
+    const current_day_of_week = convertDayOfWeek((new Date()).getDay());
     try
     {
         // purge cached data
@@ -19,29 +21,13 @@ export async function GET(request) {
             task_instances ti
         ON 
             t.task_id = ti.task_id
+        WHERE
+            t.recurrence_days[${current_day_of_week} + 1] = true
         ORDER BY 
             t.task_id;`;
-        // console.log(data.rows);
 
-        const days_of_week_data = await sql`
-        SELECT
-            task_id,
-            ARRAY_AGG(day_of_week ORDER BY day_of_week) AS days_of_week
-        FROM 
-            task_instances
-        GROUP BY 
-            task_id;`;
-        // console.log(days_of_week_data.rows);
-
-        const response = data.rows.map((task_instance) => {
-            return {
-                ...task_instance,
-                days_of_week: days_of_week_data.rows.find((days_of_week) => {
-                    return days_of_week.task_id === task_instance.task_id
-                }).days_of_week
-            }
-        });
-        console.log(response);
+        const response = data.rows;
+        console.log('FETCH TASK INSTANCES', response);
 
         return NextResponse.json({ response }, { status: 200 });
     } 

@@ -8,28 +8,49 @@ import ListIcon from '@/assets/list-icon.svg';
 import LineGraph from '@/components/LineGraph';
 import ProgressCircle from '@/components/ProgressCircle';
 
-const cardInfo = [
-    {
-      header: 'Streak',
-      value: 14,
-      desc: 'At least 1 completed'
-    },
-    {
-      header: 'Completed',
-      value: 11,
-      desc: 'Completed this week'
-    },
-    {
-      header: 'Missed',
-      value: 2,
-      desc: 'Missed yesterday'
-    }, 
-    {
-      header: 'Completion Rate',
-      value: '86.3%',
-      desc: 'Consistency so far'
-    }
-  ];
+const statsInfo = [
+  {
+    header: 'Streak',
+    value: 14,
+    desc: 'At least 1 completed'
+  },
+  {
+    header: 'Completed',
+    value: 11,
+    desc: 'Completed this week'
+  },
+  {
+    header: 'Missed',
+    value: 2,
+    desc: 'Missed yesterday'
+  }, 
+  {
+    header: 'Completion Rate',
+    value: '86.3%',
+    desc: 'Consistency so far'
+  }
+];
+
+const resolutionsInfo = [
+  {
+    label: "Fitness",
+    progress: 46,
+    value: 212,
+    color: "#4CAF50",
+  },
+  {
+    label: "Career",
+    progress: 62,
+    value: 382,
+    color: "#00BCD4",
+  },
+  {
+    label: "Social",
+    progress: 46,
+    value: 900,
+    color: "#FF9800",
+  }
+];
 
 export default function Profile() {
   
@@ -66,7 +87,7 @@ export default function Profile() {
 
             <div className='flex flex-col flex-[3] basis-[1px] min-w-0 gap-4 h-full'>
               <div className='flex flex-1 w-full gap-4'>
-                {cardInfo.map((card, i) => (  
+                {statsInfo.map((card, i) => (  
                   <Card className='flex-1 p-2 self-stretch min-h-32 max-h-32 min-w-32' key={i}>
                     <CardHeader className='flex items-center justify-center w-full text-center text-gray-200 text-xs'>
                       {card.header}
@@ -156,17 +177,15 @@ export default function Profile() {
               <CardHeader className="text-sm font-bold">
                 Resolutions
               </CardHeader>
-              <CardBody className="flex items-center">
-                <div className="flex justify-around h-full w-full min-w-0 overflow-hidden">
-                  <div className="flex-1 basis-[0] min-w-0">
-                    <ProgressCircle percentage={46} label="92,980" subLabel="Cases" color="#4CAF50" />
-                  </div>
-                  <div className="flex-1 basis-[0] min-w-0">
-                    <ProgressCircle percentage={74} label="28,546" subLabel="Applications" color="#00BCD4" />
-                  </div>
-                  <div className="flex-1 basis-[0] min-w-0">
-                    <ProgressCircle percentage={14} label="14,008" subLabel="Products" color="#FF9800" />
-                  </div>
+              <CardBody className="flex items-center pt-0 pb-8">
+                <div className="flex justify-around h-full w-full min-w-0 overflow-hidden p-4">
+                  {resolutionsInfo.map((info, i) => {
+                    return (
+                      <div className="flex justify-center flex-1 basis-[0] min-w-0" key={i}>
+                        <ProgressCircle progress={info.progress} value={info.value} label={info.label} color={info.color} />
+                      </div>
+                    );
+                  })}
                 </div>
               </CardBody>
             </Card>

@@ -11,11 +11,11 @@ import styles from '/app/styles.module.css';
 import { useModal } from '/contexts/ModalContext';
 import { useList } from '/contexts/ListContext';
 import { ResolutionModalTasks } from './ResolutionModalTasks';
-import { useRouter } from 'next/navigation';
 
 export function ResolutionModalBody({ onClose }) 
 {
   const {
+    selectedId,
     resOpenType,
     modalIsLoaded,
     title,
@@ -24,7 +24,6 @@ export function ResolutionModalBody({ onClose })
     setDesc,
     taskItems, 
     setTaskItems,
-    createTask,
   } = useModal();
 
   const {
@@ -33,11 +32,13 @@ export function ResolutionModalBody({ onClose })
     updateResolution,
   } = useList();
 
-  const router = useRouter();
-
   function handleAddTask(event) 
   {
-    taskItems ? setTaskItems([...taskItems, createTask('', '', [])]) : setTaskItems([createTask('', '', [])]);
+    const newTask = {
+      task: '',
+      desc: ''
+    }
+    setTaskItems([...taskItems, newTask]);
   }
 
   // saves resolution for adding or updating
@@ -45,24 +46,15 @@ export function ResolutionModalBody({ onClose })
   {
     setModalIsLoaded(false);
     const updatedTaskItems = taskItems.map((task, taskIndex) => {
-      let updatedInstances = [];
-      if (groupsSelected[taskIndex]) 
-      {
-        updatedInstances = groupsSelected[taskIndex].reduce((instances, day_of_week) => {
-          return [...instances, (createTaskInstance
-            (
-              day_of_week,
-              new Date().toISOString().slice(11,19), 
-              new Date().toISOString().slice(11,19), 
-              false
-            ))]
-        }, []);
-      } 
+      const recurrence_days = new Array(7).fill(false);
+      groupsSelected[taskIndex].forEach((itemSelected) => {
+        recurrence_days[itemSelected] = true;
+      });
 
       return {
         title: task.title,
         description: task.description,
-        instances: updatedInstances 
+        recurrence_days: recurrence_days
       }
     })
 

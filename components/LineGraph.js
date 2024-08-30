@@ -1,7 +1,7 @@
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, TimeScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
 import 'chartjs-adapter-date-fns'; 
-import { Colors } from '@/util/constants'
+import { Colors } from '@/lib/constants'
 
 ChartJS.register(LineElement, TimeScale, LinearScale, PointElement, Tooltip, Legend);
 

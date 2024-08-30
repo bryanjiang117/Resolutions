@@ -1,7 +1,6 @@
-// export const dynamic = 'force-dynamic';
-
 import { NextResponse } from "next/server";
 import { sql } from '@vercel/postgres';
+import { convertDayOfWeek } from "@/lib/utility";
 
 export async function POST(req, res) {
     try 
@@ -23,28 +22,32 @@ export async function POST(req, res) {
         
         for (const task of data.taskItems) 
         {
-            // insert updated tasks
+            // post task and get its id
             const task_response = await sql`
-            INSERT INTO tasks (resolution_id, title, description)
+            INSERT INTO tasks (resolution_id, title, description, recurrence_days)
             VALUES (
                 ${data.resolution_id},
                 ${task.title},
-                ${task.description}
+                ${task.desc},
+                ${task.recurrence_days}
             )
             RETURNING task_id;`;
             const task_id = task_response.rows[0].task_id;
-
-            // insert updated task instances
-            for (const task_instance of task.instances) {
+            
+            const date = new Date();
+            const current_day_of_week = convertDayOfWeek(date.getDay());
+            const formatted_date = date.toISOString().split('T')[0];
+            if (task.recurrence_days[current_day_of_week])
+            {
+                console.log('-------------------------------YESSSIR-----------', current_day_of_week);
                 await sql`
-                INSERT INTO task_instances (task_id, day_of_week, completed)
+                INSERT INTO task_instances (task_id, date)
                 VALUES (
                     ${task_id},
-                    ${task_instance.day_of_week},
-                    ${task_instance.completed == null ? false : task_instance.completed}
-                );`;
+                    ${formatted_date}
+                );`
             }
-        }
+        };
         
         return NextResponse.json({ response: 'successfully updated resolution' }, { status: 200 });
     } 

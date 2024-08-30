@@ -12,27 +12,13 @@ export async function GET(request) {
         const url = new URL(request.url);
         const resolution_id = url.searchParams.get('resolution_id');
         
-        const taskResponse = await sql`
+        const data = await sql`
         SELECT * FROM tasks
         WHERE resolution_id = ${resolution_id};`;
 
-        let taskItems = [];
-        for (const task of taskResponse.rows) 
-        {
-            const instanceResponse = await sql`
-            SELECT * FROM task_instances
-            WHERE task_id = ${task.task_id};`;
+        const response = data.rows;
 
-            taskItems.push(
-                {
-                    title: task.title,
-                    description: task.description,
-                    instances: instanceResponse.rows
-                } 
-            );
-
-        }
-        return NextResponse.json({ taskItems: taskItems }, { status: 200 });
+        return NextResponse.json({ response }, { status: 200 });
     } 
     catch (error) 
     {

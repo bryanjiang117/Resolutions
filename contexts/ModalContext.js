@@ -15,27 +15,6 @@ export const ModalProvider = ({children}) =>
   const [groupsSelected, setGroupsSelected] = useState([[]]);
   const [taskItems, setTaskItems] = useState([]);
 
-  // creates a task instance object
-  function createTaskInstance(day_of_week, start_time, end_time, complete) 
-  {
-    return {
-      day_of_week: day_of_week,
-      start_time: start_time,
-      end_time: end_time,
-      complete: complete
-    }
-  }
-  
-  // creates a task object
-  function createTask(title, desc, instances) 
-  {
-    return {
-      title: title,
-      desc: desc,
-      instances: instances
-    };
-  }
-
   async function fetchTasks(resolution_id) 
   {
     try 
@@ -49,20 +28,17 @@ export const ModalProvider = ({children}) =>
         console.log('something went wrong with fetching tasks');
       }
       
-      const responseData = await response.json();
-      setTaskItems(responseData.taskItems);
-
-      setGroupsSelected( 
-        responseData.taskItems.reduce((groupsSelected, task) => 
-        {
-          return [...groupsSelected, task.instances.length > 0
-            ? task.instances.reduce((groupSelected, instance) => 
-            {
-              return [...groupSelected, instance.day_of_week];
-            }, [])
-            : []
-          ]
-        }, [])
+      const fetchedTaskItems = (await response.json()).response;
+      setTaskItems(fetchedTaskItems);
+      setGroupsSelected(
+        fetchedTaskItems.map(item => {
+          return item.recurrence_days.reduce((selectedDays, isDaySelected, index) => {
+            if (isDaySelected) {
+              selectedDays.push(index);
+            }
+            return selectedDays;
+          }, []);
+        })
       );
     }
     catch (error)
@@ -92,8 +68,6 @@ export const ModalProvider = ({children}) =>
     setGroupsSelected,
     taskItems, 
     setTaskItems,
-    createTaskInstance,
-    createTask,
     fetchTasks,
   }} >
     {children}

@@ -29,8 +29,7 @@ export default function Todo() {
       {
         console.log('something went wrong with fetching tasks');
       }
-      const responseData = await response.json();
-      const updatedTasksToday = responseData.response.filter((task) => task.day_of_week === (new Date()).getDay());
+      const updatedTasksToday = (await response.json()).response;
       setTasksToday(updatedTasksToday);
     } 
     catch (error)
@@ -130,7 +129,7 @@ export default function Todo() {
                       {daysOfTheWeek.map((day, index) => (
                         <span 
                           key={index} 
-                          className={task.days_of_week.includes(index) ? 'text-primary' : 'text-gray-500'}
+                          className={task.recurrence_days[index] ? 'text-primary' : 'text-gray-500'}
                         >
                           {day + ' '}
                         </span>

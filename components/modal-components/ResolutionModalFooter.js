@@ -25,7 +25,6 @@ export function ResolutionModalFooter()
     setGroupsSelected,
     taskItems, 
     setTaskItems,
-    createTaskInstance,
   } = useModal();
 
   const {
@@ -38,36 +37,26 @@ export function ResolutionModalFooter()
   {
     setModalIsLoaded(false);
     const updatedTaskItems = taskItems.map((task, taskIndex) => {
-      let updatedInstances = [];
-      if (groupsSelected[taskIndex]) 
-      {
-        updatedInstances = groupsSelected[taskIndex].reduce((instances, day_of_week) => {
-          return [...instances, (createTaskInstance
-            (
-              day_of_week,
-              new Date().toISOString().slice(11,19), 
-              new Date().toISOString().slice(11,19), 
-              false
-            ))]
-        }, []);
-      } 
+      const recurrence_days = new Array(7).fill(false);
+      groupsSelected[taskIndex].forEach((itemSelected) => {
+        recurrence_days[itemSelected] = true;
+      });
+
       return {
         title: task.title,
         description: task.description,
-        instances: updatedInstances 
+        recurrence_days: recurrence_days
       }
     })
 
     if (resOpenType == 'add') 
     {
       await postResolution(title, desc, updatedTaskItems);
-      console.log('refreshed');
       window.location.reload();
     } 
     else if (resOpenType == 'update') 
     {
       await updateResolution(selectedId, title, desc, updatedTaskItems);
-      console.log('refreshed');
       window.location.reload();
     }
     setResModalIsOpen(false);

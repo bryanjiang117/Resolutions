@@ -35,7 +35,6 @@ export const ListProvider = ({children}) =>
       {
         console.log('something went wrong with posting resolution');
       }
-      console.log('posted');
     }
     catch (error)
     {
@@ -50,7 +49,6 @@ export const ListProvider = ({children}) =>
     try
     {
       setListIsLoading(true);
-      console.log(taskItems);
       const response = await fetch(`/api/update-resolution`, 
       {
         method: 'POST',
@@ -99,7 +97,6 @@ export const ListProvider = ({children}) =>
       {
         console.log('something went wrong with deleting resolutions');  
       }
-      console.log('deleted');
     }
     catch (error) 
     {
@@ -134,7 +131,6 @@ export const ListProvider = ({children}) =>
     }
     finally 
     {
-      console.log('fetched');
       setListIsLoading(false);
     }
   }
