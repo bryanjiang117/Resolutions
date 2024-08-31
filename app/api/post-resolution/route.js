@@ -13,7 +13,7 @@ export async function POST(req, res) {
         INSERT INTO resolutions (title, description)
         VALUES (
             ${data.title}, 
-            ${data.desc}
+            ${data.description}
         )
         RETURNING resolution_id;`;
         const resolution_id = resolution_response.rows[0].resolution_id;
@@ -26,7 +26,7 @@ export async function POST(req, res) {
             VALUES (
                 ${resolution_id},
                 ${task.title},
-                ${task.desc},
+                ${task.description},
                 ${task.recurrence_days}
             )
             RETURNING task_id;`;

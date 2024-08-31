@@ -18,7 +18,7 @@ export default function Todo() {
   const [tasksToday, setTasksToday] = useState([]);
   
   // fetch the current resolutions from database
-  async function fetchTasks() 
+  async function fetchTaskInstances() 
   {
     try 
     {
@@ -80,7 +80,7 @@ export default function Todo() {
   }
   
   useEffect(() => {
-    fetchTasks();
+    fetchTaskInstances();
   }, []);
 
   return (
@@ -125,7 +125,7 @@ export default function Todo() {
                       
                     </CardBody>
                   
-                    {/* <div className={styles['task-days-of-week']}>
+                    <div className={styles['task-days-of-week']}>
                       {daysOfTheWeek.map((day, index) => (
                         <span 
                           key={index} 
@@ -134,7 +134,7 @@ export default function Todo() {
                           {day + ' '}
                         </span>
                       ))}
-                    </div> */}
+                    </div>
 
                   </Card>
                 ))}

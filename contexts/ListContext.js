@@ -21,7 +21,7 @@ export const ListProvider = ({children}) =>
         body: JSON.stringify(
           {
             title: title,
-            desc: desc,
+            description: desc,
             taskItems: taskItems
           }
         ),
@@ -56,7 +56,7 @@ export const ListProvider = ({children}) =>
           {
             resolution_id: id, 
             title: title, 
-            desc: desc, 
+            description: desc, 
             taskItems: taskItems
           }),
         headers: 

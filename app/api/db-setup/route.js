@@ -19,8 +19,8 @@ export async function GET(request) {
         await sql`
         CREATE TABLE IF NOT EXISTS users (
             user_id SERIAL PRIMARY KEY,
-            email varchar(255),
-            password varchar(255),
+            email varchar(255) NOT NULL,
+            password varchar(255) NOT NULL,
             streak INTEGER DEFAULT 0,
             completed_this_week INTEGER DEFAULT 0,
             missed_yesterday INTEGER DEFAULT 0,
@@ -32,8 +32,8 @@ export async function GET(request) {
         await sql`CREATE TABLE IF NOT EXISTS resolutions (
             resolution_id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
-            title varchar(255), 
-            description varchar(255),
+            title varchar(255) NOT NULL DEFAULT '', 
+            description varchar(255) NOT NULL DEFAULT '',
             category varchar(255)
         );`;
 
@@ -41,8 +41,8 @@ export async function GET(request) {
         CREATE TABLE IF NOT EXISTS tasks (
             task_id SERIAL PRIMARY KEY,
             resolution_id INTEGER REFERENCES resolutions(resolution_id) ON DELETE CASCADE,
-            title varchar(255),
-            description varchar(255),
+            title varchar(255) NOT NULL DEFAULT '',
+            description varchar(255) NOT NULL DEFAULT '',
             recurrence_days BOOLEAN[] NOT NULL DEFAULT ARRAY[false, false, false, false, false, false, false]
         );`;
 

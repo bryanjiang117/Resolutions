@@ -12,22 +12,22 @@ const statsInfo = [
   {
     header: 'Streak',
     value: 14,
-    desc: 'At least 1 completed'
+    description: 'At least 1 completed'
   },
   {
     header: 'Completed',
     value: 11,
-    desc: 'Completed this week'
+    description: 'Completed this week'
   },
   {
     header: 'Missed',
     value: 2,
-    desc: 'Missed yesterday'
+    description: 'Missed yesterday'
   }, 
   {
     header: 'Completion Rate',
     value: '86.3%',
-    desc: 'Consistency so far'
+    description: 'Consistency so far'
   }
 ];
 
@@ -98,7 +98,7 @@ export default function Profile() {
                           {card.value}
                         </div>
                         <p className='text-gray-500 text-xs truncate'>
-                          {card.desc}
+                          {card.description}
                         </p>
                       </div>
                     </CardBody>

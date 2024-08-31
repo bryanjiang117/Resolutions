@@ -13,7 +13,7 @@ export async function POST(req, res) {
         UPDATE resolutions
         SET 
             title = ${data.title},
-            description = ${data.desc}
+            description = ${data.description}
         WHERE resolution_id = ${data.resolution_id};`;
 
         // delete this resolution's tasks and task instances using cascade
@@ -29,7 +29,7 @@ export async function POST(req, res) {
             VALUES (
                 ${data.resolution_id},
                 ${task.title},
-                ${task.desc},
+                ${task.description},
                 ${task.recurrence_days}
             )
             RETURNING task_id;`;
