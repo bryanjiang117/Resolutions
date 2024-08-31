@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql } from '@vercel/postgres';
+import { revalidatePath } from "next/cache";
 import { convertDayOfWeek } from "@/lib/utility";
 
 export async function POST(req, res) {
@@ -48,6 +49,10 @@ export async function POST(req, res) {
                 );`
             }
         };
+
+        revalidatePath('/api/fetch-resolutions');
+        revalidatePath('/api/fetch-task-instances');
+        revalidatePath('/api/fetch-tasks-for-resolution');
         
         return NextResponse.json({ response: 'successfully updated resolution' }, { status: 200 });
     } 

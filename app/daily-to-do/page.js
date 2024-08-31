@@ -125,7 +125,7 @@ export default function Todo() {
                       
                     </CardBody>
                   
-                    <div className={styles['task-days-of-week']}>
+                    {/* <div className={styles['task-days-of-week']}>
                       {daysOfTheWeek.map((day, index) => (
                         <span 
                           key={index} 
@@ -134,7 +134,7 @@ export default function Todo() {
                           {day + ' '}
                         </span>
                       ))}
-                    </div>
+                    </div> */}
 
                   </Card>
                 ))}

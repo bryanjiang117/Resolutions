@@ -1,7 +1,6 @@
-export const dynamic = 'force dynamic';
-
 import { NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres'
+import { revalidatePath } from "next/cache";
 
 export async function POST(req, res) {
     try 
@@ -10,6 +9,8 @@ export async function POST(req, res) {
         
         // CASCADE deletes tasks and task_instances
         await sql`DELETE FROM resolutions WHERE resolution_id = ${data.resolution_id};`;
+
+        revalidatePath('/api/fetch-resolutions');
 
         return NextResponse.json({ response: 'successfully deleted resolution' }, { status: 200 });
     }

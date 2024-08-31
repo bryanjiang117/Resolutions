@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
+import { revalidatePath } from 'next/cache';
 import { convertDayOfWeek } from '@/lib/utility';
 
 export async function POST(req, res) {
@@ -34,7 +35,7 @@ export async function POST(req, res) {
             const date = new Date();
             const current_day_of_week = convertDayOfWeek(date.getDay());
             const formatted_date = date.toISOString().split('T')[0];
-            if (task.recurrence_days.includes(current_day_of_week)) 
+            if (task.recurrence_days[current_day_of_week]) 
             {
                 await sql`
                 INSERT INTO task_instances (task_id, date)
@@ -44,6 +45,10 @@ export async function POST(req, res) {
                 );`;
             }
         };
+
+        revalidatePath('/api/fetch-resolutions');
+        revalidatePath('/api/fetch-task-instances');
+        revalidatePath('/api/fetch-tasks-for-resolution');
         
         return NextResponse.json({ response: 'successfully posted resolution' }, { status: 200 });
     }

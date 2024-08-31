@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { sql } from '@vercel/postgres'; 
 
-export async function GET(request) {
+export async function GET(req) {
     try
     {
-        const url = new URL(request.url);
+        const url = new URL(req.url);
         const resolution_id = url.searchParams.get('resolution_id');
         
         const response = await sql`
