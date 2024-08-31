@@ -28,7 +28,7 @@ export const ModalProvider = ({children}) =>
         console.log('something went wrong with fetching tasks');
       }
       
-      const fetchedTaskItems = (await response.json()).response;
+      const fetchedTaskItems = (await response.json()).data;
       setTaskItems(fetchedTaskItems);
       setGroupsSelected(
         fetchedTaskItems.map(item => {

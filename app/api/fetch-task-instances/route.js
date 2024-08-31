@@ -1,16 +1,11 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
-import { revalidateTag } from "next/cache";
 import { convertDayOfWeek } from '@/lib/utility';
 
 export async function GET(request) {
     const current_day_of_week = convertDayOfWeek((new Date()).getDay());
     try
     {
-        // purge cached data
-        const tag = request.nextUrl.searchParams.get('tag')
-        revalidateTag(tag);
-
         const data = await sql`
         SELECT 
             t.*, 
@@ -27,7 +22,6 @@ export async function GET(request) {
             t.task_id;`;
 
         const response = data.rows;
-        console.log('FETCH TASK INSTANCES', response);
 
         return NextResponse.json({ response }, { status: 200 });
     } 

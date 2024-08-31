@@ -49,7 +49,6 @@ export function ResolutionModalTasks()
     {
       setGroupsSelected([...groupsSelected.slice(0, index), event, ...groupsSelected.slice(index + 1)]);
     }
-    console.log('groups selected in modal', groupsSelected);
   }
 
   // handles pressing enter key in modal
@@ -80,7 +79,7 @@ export function ResolutionModalTasks()
   }
 
   return (
-    taskItems.map((item, index) => (
+    taskItems ? taskItems.map((item, index) => (
       <div className={styles['task-container']} key={index}>
         <Skeleton isLoaded={modalIsLoaded} className='rounded-lg'>
           <Input 
@@ -137,6 +136,6 @@ export function ResolutionModalTasks()
           </CheckboxGroup>
         </Skeleton>
       </div>
-    ))
+    )) : null
   );
 }

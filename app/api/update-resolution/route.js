@@ -22,7 +22,7 @@ export async function POST(req, res) {
         
         for (const task of data.taskItems) 
         {
-            // post task and get its id
+            // insert task and get its id
             const task_response = await sql`
             INSERT INTO tasks (resolution_id, title, description, recurrence_days)
             VALUES (
@@ -34,12 +34,12 @@ export async function POST(req, res) {
             RETURNING task_id;`;
             const task_id = task_response.rows[0].task_id;
             
+            // insert task instances
             const date = new Date();
             const current_day_of_week = convertDayOfWeek(date.getDay());
             const formatted_date = date.toISOString().split('T')[0];
             if (task.recurrence_days[current_day_of_week])
             {
-                console.log('-------------------------------YESSSIR-----------', current_day_of_week);
                 await sql`
                 INSERT INTO task_instances (task_id, date)
                 VALUES (

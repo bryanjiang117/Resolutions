@@ -8,18 +8,13 @@ export async function POST(request) {
     {
         const data = await request.json();
 
-        await sql`
+        const response = await sql`
         UPDATE task_instances
         SET 
             completed = ${data.completed}
         WHERE task_instance_id = ${data.task_instance_id};`;
-
-        const response = await sql`
-        SELECT * FROM task_instances
-        WHERE task_instance_id = ${data.task_instance_id};`;
-        console.log(response);
         
-        return NextResponse.json({ response: 'successfully updated task completion' }, { status: 200 });
+        return NextResponse.json({ response }, { status: 200 });
     }
     catch (error) 
     {

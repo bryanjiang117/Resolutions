@@ -34,17 +34,14 @@ export async function POST(req, res) {
             const date = new Date();
             const current_day_of_week = convertDayOfWeek(date.getDay());
             const formatted_date = date.toISOString().split('T')[0];
-            for (const day_of_week of task.recurrence_days) 
+            if (task.recurrence_days.includes(current_day_of_week)) 
             {
-                if (day_of_week === current_day_of_week) 
-                {
-                    await sql`
-                    INSERT INTO task_instances (task_id, date)
-                    VALUES (
-                        ${task_id},
-                        ${formatted_date}
-                    );`;
-                }
+                await sql`
+                INSERT INTO task_instances (task_id, date)
+                VALUES (
+                    ${task_id},
+                    ${formatted_date}
+                );`;
             }
         };
         
