@@ -49,6 +49,7 @@ export function ResolutionModalHeader()
   async function handleDelete(event) 
   {
     await deleteResolution(selectedId);
+    window.location.reload();
     handleCloseModal();
   }
 

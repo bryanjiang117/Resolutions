@@ -52,10 +52,12 @@ export function ResolutionModalFooter()
     if (resOpenType == 'add') 
     {
       await postResolution(title, desc, updatedTaskItems);
+      window.location.reload();
     } 
     else if (resOpenType == 'update') 
     {
       await updateResolution(selectedId, title, desc, updatedTaskItems);
+      window.location.reload();
     }
     setResModalIsOpen(false);
     setTitle('');

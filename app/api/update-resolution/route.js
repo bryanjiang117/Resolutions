@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from "next/cache";
 import { convertDayOfWeek } from "@/lib/utility";
+import { auth } from "@/auth";
 
 export async function POST(req, res) {
     try 

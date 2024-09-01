@@ -2,16 +2,21 @@ import { NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { convertDayOfWeek } from '@/lib/utility';
+import { auth } from '@/auth';
 
 export async function POST(req, res) {
     try 
     {
         const data = await req.json();
+
+        // get user session
+        const session = await auth();
         
         // post resolution and get its id
         const resolution_response = await sql`
-        INSERT INTO resolutions (title, description)
+        INSERT INTO resolutions (user_id, title, description)
         VALUES (
+            ${session.user.user_id},
             ${data.title}, 
             ${data.description}
         )

@@ -47,15 +47,15 @@ export const { auth, signIn, signOut } = NextAuth(
 
           const user = await getUser(email);
           if (!user) return null; // returning null prevents user from logging in
-          
-          console.log('---------------------------------------------------------------------');
-          console.log(password);
-          console.log(user.password);
-          console.log(await bcrypt.compare(password, user.password))
-          console.log('---------------------------------------------------------------------');
-          
+        
           const isPasswordValid = await bcrypt.compare(password, user.password);
-          if (isPasswordValid) return user;
+          if (isPasswordValid) 
+          {
+            return {
+              user_id: user.user_id,
+              email: user.email,
+            };
+          }
         }
         
         // not able to validate
@@ -64,4 +64,18 @@ export const { auth, signIn, signOut } = NextAuth(
       },
     }),
   ],
+  callbacks: {
+    async session({ session, token, user }) {
+      // Include user_id in the session object
+      session.user.user_id = token.user_id;
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        // Store user_id in the token
+        token.user_id = user.user_id;
+      }
+      return token;
+    },
+  },
 });
