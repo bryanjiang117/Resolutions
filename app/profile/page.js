@@ -1,35 +1,13 @@
 'use client'
 
-import { useState } from 'react';
-import { Card, CardHeader, CardBody, CardFooter, Divider, Checkbox } from '@nextui-org/react';
+import { useState, useEffect } from 'react';
+import { Card, CardHeader, CardBody, CardFooter, Divider, Checkbox, CircularProgress } from '@nextui-org/react';
 import styles from './styles.module.css';
 import NavbarComponent from '@/components/Navbar';
 import ListIcon from '@/assets/list-icon.svg';
 import LineGraph from '@/components/LineGraph';
 import ProgressCircle from '@/components/ProgressCircle';
-
-const statsInfo = [
-  {
-    header: 'Streak',
-    value: 14,
-    description: 'At least 1 completed'
-  },
-  {
-    header: 'Completed',
-    value: 11,
-    description: 'Completed this week'
-  },
-  {
-    header: 'Missed',
-    value: 2,
-    description: 'Missed yesterday'
-  }, 
-  {
-    header: 'Completion Rate',
-    value: '86.3%',
-    description: 'Consistency so far'
-  }
-];
+import { useTodo } from '@/contexts/TodoContext'
 
 const resolutionsInfo = [
   {
@@ -53,30 +31,73 @@ const resolutionsInfo = [
 ];
 
 export default function Profile() {
-  
-  const [tasks, setTasks] = useState([
-    {
-      title: 'Go to the gym',
-      completed: false,
-    },
-    {
-      title: 'Do one leetcode question fdsfdsfdsfdsfsdf',
-      completed: false,
-    },
-    {
-      title: 'Go for a run',
-      completed:false,
-    }
-  ]);
+  const [userData, setUserData] = useState();
+  const [stats, setStats] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleCheck(index) {
-    const updatedTasks = tasks.map((task, i) => 
-      i === index ? { ...task, completed: !task.completed } : task
-    );
-    setTasks(updatedTasks);
+  const { 
+    tasksToday,
+    fetchTaskInstances,
+    handleCheck
+  } = useTodo();
+
+  async function initializeProfile() {
+    try 
+    {
+      setIsLoading(true);
+      const response = await fetch('/api/fetch-user-data');
+
+      if (!response) {
+        throw new Error('something went wrong with fetching user data');
+      }
+
+      const data = (await response.json()).data;
+      console.log(data);
+      // data for the 4 cards on top
+      setStats([
+        {
+          header: 'Streak',
+          value: data.streak,
+          description: 'At least 1 completed'
+        },
+        {
+          header: 'Completed',
+          value: data.completed_this_week,
+          description: 'Completed this week'
+        },
+        {
+          header: 'Missed',
+          value: data.missed_yesterday,
+          description: 'Missed yesterday'
+        }, 
+        {
+          header: 'Completion Rate',
+          value: data.completion_rate.toFixed().toString() + '%',
+          description: 'Consistency so far'
+        }
+      ]);
+      await fetchTaskInstances();
+      setUserData[data];
+    }   
+    catch(error) 
+    {
+      console.log(error);
+    }
+    finally 
+    {
+      setIsLoading(false);
+    }
   }
 
+  useEffect(() => {
+    initializeProfile();
+  }, []);
+
   return (
+    isLoading ? 
+    <div className={styles.loading}>
+      <CircularProgress size='md' aria-label='loading...' />
+    </div> :
     <>
       <NavbarComponent />
 
@@ -87,7 +108,7 @@ export default function Profile() {
 
             <div className='flex flex-col flex-[3] basis-[1px] min-w-0 gap-4 h-full'>
               <div className='flex flex-1 w-full gap-4'>
-                {statsInfo.map((card, i) => (  
+                {stats.map((card, i) => (  
                   <Card className='flex-1 p-2 self-stretch min-h-32 max-h-32 min-w-32' key={i}>
                     <CardHeader className='flex items-center justify-center w-full text-center text-gray-200 text-xs'>
                       {card.header}
@@ -125,7 +146,7 @@ export default function Profile() {
                       Best
                     </div>
                     <div className='text-lg text-green-400'>
-                      Mon
+                      {userData?.best_day || 'N/A'}
                     </div>
                   </div>
                   <Divider orientation='vertical'/>
@@ -134,7 +155,7 @@ export default function Profile() {
                       Worst
                     </div>
                     <div className='text-lg text-red-400'>
-                      Fri
+                      {userData?.worst_day || 'N/A'}
                     </div>
                   </div>
                 </div>
@@ -148,7 +169,8 @@ export default function Profile() {
                   </span>
                 </CardHeader>
                 <CardBody className='pt-1'>
-                  {tasks.map((task, i) => {
+                  {tasksToday.map((task, i) => {
+                    console.log(task);
                     return (
                       <div key={i} className={`flex items-center w-full mb-1 ${task.completed ? 'line-through text-gray-400' : ''}`}>
                         {/* empty checkbox because truncate requires display block on the checkbox but that messes with the formatting */}
@@ -156,7 +178,8 @@ export default function Profile() {
                           size='sm'
                           lineThrough
                           className='w-full block flex-shrink-0' 
-                          onChange={() => handleCheck(i)}
+                          isSelected={task.completed}
+                          onChange={(event) => handleCheck(event, i)}
                         />
                         <span className='truncate w-full block text-sm'>
                           {task.title}

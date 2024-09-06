@@ -6,7 +6,7 @@ export async function GET(request) {
     const current_day_of_week = convertDayOfWeek((new Date()).getDay());
     try
     {
-        const data = await sql`
+        const response = await sql`
         SELECT 
             t.*, 
             ti.*
@@ -21,9 +21,9 @@ export async function GET(request) {
         ORDER BY 
             t.task_id;`;
 
-        const response = data.rows;
+        const data = response.rows;
 
-        return NextResponse.json({ response }, { status: 200 });
+        return NextResponse.json({ data }, { status: 200 });
     } 
     catch (error) 
     {

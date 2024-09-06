@@ -11,12 +11,13 @@ export async function POST(req, res) {
 
         // get user session
         const session = await auth();
-        
+        const user_id = session.user.user_id;
+
         // post resolution and get its id
         const resolution_response = await sql`
         INSERT INTO resolutions (user_id, title, description)
         VALUES (
-            ${session.user.user_id},
+            ${user_id},
             ${data.title}, 
             ${data.description}
         )
@@ -27,8 +28,9 @@ export async function POST(req, res) {
         {
             // post task and get its id
             const task_response = await sql`
-            INSERT INTO tasks (resolution_id, title, description, recurrence_days)
+            INSERT INTO tasks (user_id, resolution_id, title, description, recurrence_days)
             VALUES (
+                ${user_id},
                 ${resolution_id},
                 ${task.title},
                 ${task.description},
@@ -43,8 +45,9 @@ export async function POST(req, res) {
             if (task.recurrence_days[current_day_of_week]) 
             {
                 await sql`
-                INSERT INTO task_instances (task_id, date)
+                INSERT INTO task_instances (user_id, task_id, date)
                 VALUES (
+                    ${user_id},
                     ${task_id},
                     ${formatted_date}
                 );`;

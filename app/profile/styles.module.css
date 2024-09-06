@@ -9,3 +9,11 @@
 .main-container {
   height: calc(100% - 64px);
 }
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(100% - 4rem - 1rem);
+}

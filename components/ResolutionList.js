@@ -20,7 +20,8 @@ const ResolutionList = () => {
     resolutionItems,
   } = useList();
 
-  const { fetchTasks,
+  const { 
+    fetchTasks,
     setTitle, 
     setDesc, 
     setSelectedId, 

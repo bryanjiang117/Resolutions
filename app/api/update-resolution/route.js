@@ -9,6 +9,10 @@ export async function POST(req, res) {
     {
         const data = await req.json();
 
+        // get user session
+        const session = await auth();
+        const user_id = session.user.user_id;
+
         // update resolution
         await sql`
         UPDATE resolutions
@@ -26,8 +30,9 @@ export async function POST(req, res) {
         {
             // insert task and get its id
             const task_response = await sql`
-            INSERT INTO tasks (resolution_id, title, description, recurrence_days)
+            INSERT INTO tasks (user_id, resolution_id, title, description, recurrence_days)
             VALUES (
+                ${user_id},
                 ${data.resolution_id},
                 ${task.title},
                 ${task.description},
@@ -43,8 +48,9 @@ export async function POST(req, res) {
             if (task.recurrence_days[current_day_of_week])
             {
                 await sql`
-                INSERT INTO task_instances (task_id, date)
+                INSERT INTO task_instances (user_id, task_id, date)
                 VALUES (
+                    ${user_id},
                     ${task_id},
                     ${formatted_date}
                 );`
